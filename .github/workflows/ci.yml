@@ -3,35 +3,35 @@ name: CI
 on: 
     pull_request:
         branches:
-            - [dev, main]
+            - dev
+            - main
     
 jobs: 
     frontend:
         runs-on: ubuntu-latest
+        defaults:
+            run:
+                working-directory: ./frontend
         steps:
             - uses: actions/checkout@v3
             - uses: actions/setup-node@v3
               with:
                   node-version: '20'
-            - run: npm install
-              working-directory: ./frontend
+            - run: npm ci
             - run: npm run lint
-              working-directory: ./frontend
             - run: npm run build
-              working-directory: ./frontend
             - run: npm test
-              working-directory: ./frontend
     
     backend:
         runs-on: ubuntu-latest
+        defaults:
+            run:
+                working-directory: ./backend
         steps:
             - uses: actions/checkout@v3
             - uses: actions/setup-node@v3
               with:
                   node-version: '20'
-            - run: npm install
-              working-directory: ./backend
+            - run: npm ci
             - run: npm run build
-              working-directory: ./backend
             - run: npm test
-              working-directory: ./backend
