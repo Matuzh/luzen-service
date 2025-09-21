@@ -4,7 +4,19 @@
         "dev": "next dev -p 3000",
         "build": "next build",
         "start": "next start -p 3000",
-        "lint": "eslint . --ext .ts,.tsx",
+        "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
         "test": "jest"
+    },
+    "devDependencies": {
+        "@eslint/js": "^9.36.0",
+        "eslint": "^9.36.0",
+        "eslint-plugin-react": "^7.37.5",
+        "globals": "^16.4.0",
+        "typescript-eslint": "^8.44.0"
+    },
+    "dependencies": {
+        "next": "^15.5.3",
+        "react": "^19.1.1",
+        "react-dom": "^19.1.1"
     }
 }
