@@ -1,0 +1,11 @@
+{
+    "name": "backend",
+    "scripts": {
+        "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+        "start": "node dist/server.js",
+        "build": "tsc",
+        "migrate": "prisma migrate dev",
+        "seed": "ts-node prisma/seed.ts",
+        "test": "jest"
+    }
+}
