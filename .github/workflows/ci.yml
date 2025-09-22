@@ -18,7 +18,8 @@ jobs:
               with:
                   node-version: '20'
             - run: npm ci
-            - run: npm run lint
+            - name: Run ESLint, build and tests
+              run: npm run lint
             - run: npm run build
             - run: npm test
     
@@ -33,5 +34,6 @@ jobs:
               with:
                   node-version: '20'
             - run: npm ci
-            - run: npm run build
+            - name: Run build and tests
+              run: npm run build
             - run: npm test
