@@ -21,12 +21,26 @@ export default defineConfig([
       react: { version: "detect" }, // automatyczne wykrycie React
     },
     rules: {
-      "react/react-in-jsx-scope": "off", // Next.js 13+ nie wymaga importu React
-      "@typescript-eslint/no-unused-vars": ["warn"], // ostrzeżenia zamiast błędów
-      "@typescript-eslint/no-require-imports": "off", // pozwala require w config
+      // Wyłącza wymóg importu React w JSX
+      "react/react-in-jsx-scope": "off",
+
+      // Ostrzeżenia dla nieużywanych zmiennych
+      "@typescript-eslint/no-unused-vars": ["warn"],
+
+      // Pozwala używać require w plikach konfiguracyjnych
+      "@typescript-eslint/no-require-imports": "off",
     },
-    ignores: [".next/", "node_modules/", "postcss.config.js", "tailwind.config.js"],
+    ignores: [
+      ".next/",
+      "node_modules/",
+      "postcss.config.js",
+      "tailwind.config.js",
+    ],
   },
+
+  // TypeScript
   tseslint.configs.recommended,
+
+  // React plugin, flat config, z regułami wyłączonymi w rules powyżej
   pluginReact.configs.flat.recommended,
 ]);
