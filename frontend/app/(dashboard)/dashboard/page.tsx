@@ -1,10 +1,12 @@
-import React from 'react' 
+"use client"
+
+import React from 'react'
 
 export default function DashboardPage() {
   return (
     <div>
-      <h1>Dashboard</h1>
-      <p>Welcome to your dashboard!</p>
+      <h2>Dashboard Home</h2>
+      <p>Welcome to the dashboard!</p>
     </div>
   );
 }
