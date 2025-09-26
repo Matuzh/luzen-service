@@ -4,7 +4,7 @@
         "dev": "next dev -p 3000",
         "build": "next build",
         "start": "next start -p 3000",
-        "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+        "lint": "eslint . --ext .js,.jsx,.ts,.tsx --ignore-pattern node_modules --ignore-pattern .next --ignore-pattern postcss.config.js --ignore-pattern tailwind.config.js --ignore-pattern next-env.d.ts",
         "test": "jest"
     },
     "devDependencies": {
