@@ -30,7 +30,7 @@
     // Recommended Options
     "strict": true,
     "jsx": "preserve",
-    "verbatimModuleSyntax": true,
+    // "verbatimModuleSyntax": true,                               // Causes errors JSX/export in Next.js
     "isolatedModules": true,
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
@@ -40,6 +40,10 @@
       "dom.iterable",
       "esnext"
     ],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"]
+    },
     "allowJs": true,
     "noEmit": true,
     "incremental": true,
