@@ -10,16 +10,11 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pl">
-      <body className="bg-gray-50 text-gray-900">
-        {/* Navbar zawsze na górze */}
+      <body className="bg-gray-50 text-gray-900 flex flex-col min-h-screen">
         <Navbar />
-
-        {/* Treść strony */}
-        <main className="min-h-screen">
+        <main className="flex-grow">
           {children}
         </main>
-
-        {/* Footer zawsze na dole */}
         <Footer />
       </body>
     </html>
