@@ -1,8 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   eslint: { ignoreDuringBuilds: true },
-  experimental: { appDir: true },
-  telemetry: false,
+  reactStrictMode: true,
 };
 
 module.exports = nextConfig;
