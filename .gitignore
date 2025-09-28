@@ -39,3 +39,6 @@ jspm_packages/
 .yarn/*
 !.yarn/patches
 !.yarn/releases
+
+# Prisma
+/src/generated/prisma

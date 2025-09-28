@@ -1,5 +1,15 @@
 {
     "name": "frontend",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "directories": {
+        "lib": "lib",
+        "test": "tests"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
     "scripts": {
         "dev": "next dev -p 3000",
         "build": "next build",
@@ -38,15 +48,5 @@
         "react-hook-form": "^7.63.0",
         "zod": "^4.1.11",
         "zustand": "^5.0.8"
-    },
-    "version": "1.0.0",
-    "description": "",
-    "main": "index.js",
-    "directories": {
-        "lib": "lib",
-        "test": "tests"
-    },
-    "keywords": [],
-    "author": "",
-    "license": "ISC"
+    }
 }
