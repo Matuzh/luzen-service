@@ -3,7 +3,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
 export const metadata = {
-  title: "LuzeN - Marketplace IT",
+  title: "LuzeN | Marketplace IT",
   description: "Znajdź specjalistę IT dla swojej firmy w kilka minut",
 };
 
