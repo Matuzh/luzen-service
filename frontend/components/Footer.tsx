@@ -1,112 +1,146 @@
 "use client";
 
-import { Facebook, Twitter, Linkedin, Github, Mail } from "lucide-react";
-import Link from "next/link";
+import React from 'react';
+import { Sparkles, Shield, HeartHandshake } from 'lucide-react';
 
-export default function Footer() {
+const Footer = () => {
+  const footerLinks = {
+    'Dla firm': [
+      { label: 'Jak to działa', href: '/how-it-works' },
+      { label: 'Cennik', href: '/pricing' },
+      { label: 'Kategorie usług', href: '/categories' },
+      { label: 'Case studies', href: '/case-studies' },
+      { label: 'API dla firm', href: '/api' }
+    ],
+    'Dla freelancerów': [
+      { label: 'Zostań wykonawcą', href: '/join' },
+      { label: 'Prowizje', href: '/fees' },
+      { label: 'Rankingi', href: '/rankings' },
+      { label: 'Certyfikaty', href: '/certificates' },
+      { label: 'Program partnerski', href: '/partners' }
+    ],
+    'Zasoby': [
+      { label: 'Blog', href: '/blog' },
+      { label: 'Poradniki', href: '/guides' },
+      { label: 'Webinary', href: '/webinars' },
+      { label: 'Newsletter', href: '/newsletter' },
+      { label: 'Społeczność', href: '/community' }
+    ],
+    'Firma': [
+      { label: 'O nas', href: '/about' },
+      { label: 'Kariera', href: '/careers' },
+      { label: 'Kontakt', href: '/contact' },
+      { label: 'Dla mediów', href: '/press' },
+      { label: 'Status systemu', href: '/status' }
+    ]
+  };
+
+  const socialLinks = [
+    { icon: 'LinkedIn', href: 'https://linkedin.com' },
+    { icon: 'Twitter', href: 'https://twitter.com' },
+    { icon: 'Facebook', href: 'https://facebook.com' },
+    { icon: 'GitHub', href: 'https://github.com' }
+  ];
+
   return (
-    <footer className="relative bg-gradient-to-br from-[#0f0f1a] via-[#1a0033] to-[#0d0d0d] text-gray-200 pt-14 pb-6 mt-12">
-
-      {/* Tło pattern – teraz nie blokuje scroll */}
-      <div className="absolute top-0 left-0 w-full h-auto bg-[url('/pattern-dots.svg')] opacity-10 pointer-events-none z-0"></div>
-
-      {/* Zawartość */}
-      <div className="relative max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12 z-10">
-
-        {/* Branding */}
-        <div>
-          <h2 className="text-2xl font-bold text-white">LuzeN</h2>
-          <p className="mt-3 text-gray-400 text-sm leading-relaxed">
-            Marketplace usług IT. Łączymy klientów ze specjalistami IT – szybko, bezpiecznie i profesjonalnie.
-          </p>
-          <p className="mt-3 text-gray-500 text-xs">
-            Naszą misją jest wspieranie rozwoju mikro-usług i budowanie silnej społeczności technologicznej.
-          </p>
-        </div>
-
-        {/* Dla klientów */}
-        <div>
-          <h3 className="text-lg font-semibold mb-4 text-white">Dla klientów</h3>
-          <ul className="space-y-2 text-gray-400">
-            <li><Link href="/zlecenia" className="hover:text-white transition">Przeglądaj zlecenia</Link></li>
-            <li><Link href="/dodaj-zlecenie" className="hover:text-white transition">Dodaj zlecenie</Link></li>
-            <li><Link href="/specjalisci" className="hover:text-white transition">Znajdź specjalistę</Link></li>
-            <li><Link href="/cennik" className="hover:text-white transition">Cennik</Link></li>
-            <li><Link href="/faq" className="hover:text-white transition">FAQ</Link></li>
-          </ul>
-        </div>
-
-        {/* Dla specjalistów i biznesu */}
-        <div>
-          <h3 className="text-lg font-semibold mb-4 text-white">Dla specjalistów</h3>
-          <ul className="space-y-2 text-gray-400">
-            <li><Link href="/dodaj-usluge" className="hover:text-white transition">Dodaj usługę</Link></li>
-            <li><Link href="/kariera" className="hover:text-white transition">Kariera</Link></li>
-            <li><Link href="/partnerzy" className="hover:text-white transition">Dla partnerów</Link></li>
-            <li><Link href="/blog" className="hover:text-white transition">Blog</Link></li>
-            <li><Link href="/kontakt" className="hover:text-white transition">Kontakt</Link></li>
-          </ul>
-        </div>
-
-        {/* Social + Newsletter + CTA */}
-        <div>
-          <h3 className="text-lg font-semibold mb-4 text-white">Społeczność</h3>
-
-          {/* Social */}
-          <div className="flex gap-4 mb-4">
-            <Link href="https://linkedin.com" target="_blank">
-              <Linkedin className="w-5 h-5 hover:text-blue-400 transition transform hover:scale-110" />
-            </Link>
-            <Link href="https://github.com" target="_blank">
-              <Github className="w-5 h-5 hover:text-gray-300 transition transform hover:scale-110" />
-            </Link>
-            <Link href="https://twitter.com" target="_blank">
-              <Twitter className="w-5 h-5 hover:text-sky-400 transition transform hover:scale-110" />
-            </Link>
-            <Link href="https://facebook.com" target="_blank">
-              <Facebook className="w-5 h-5 hover:text-blue-500 transition transform hover:scale-110" />
-            </Link>
+    <footer className="bg-slate-950 text-gray-400">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Main Footer Content */}
+        <div className="grid md:grid-cols-5 gap-8 mb-8">
+          {/* Brand Column */}
+          <div className="col-span-1">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-8 h-8 bg-gradient-to-br from-violet-500 to-purple-600 rounded-lg flex items-center justify-center">
+                <Sparkles className="w-5 h-5 text-white" />
+              </div>
+              <span className="text-xl font-bold text-white">LuzeN</span>
+            </div>
+            <p className="text-sm text-gray-400 mb-4">
+              Marketplace mikro-usług IT łączący firmy z najlepszymi specjalistami.
+            </p>
+            <div className="flex items-center gap-2 mb-4">
+              <Shield className="w-4 h-4 text-green-400" />
+              <span className="text-sm">Bezpieczne płatności</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <HeartHandshake className="w-4 h-4 text-purple-400" />
+              <span className="text-sm">100% satysfakcji</span>
+            </div>
           </div>
 
-          {/* Newsletter */}
-          <p className="text-gray-400 text-sm mb-3">Zapisz się do newslettera:</p>
-          <form className="flex items-center bg-gray-800 rounded-lg overflow-hidden group mb-4">
-            <input
-              type="email"
-              placeholder="Twój e-mail"
-              className="flex-grow px-3 py-2 bg-transparent text-sm text-gray-300 outline-none"
-            />
-            <button
-              type="submit"
-              className="px-4 py-2 bg-gradient-to-r from-purple-600 to-purple-400 text-white text-sm font-medium flex items-center gap-2 hover:opacity-90 transition group-hover:gap-3"
-            >
-              <Mail className="w-4 h-4 group-hover:rotate-12 transition" />
-              <span>Wyślij</span>
-            </button>
-          </form>
+          {/* Links Columns */}
+          {Object.entries(footerLinks).map(([title, links]) => (
+            <div key={title}>
+              <h3 className="text-white font-semibold mb-4">{title}</h3>
+              <ul className="space-y-2">
+                {links.map((link) => (
+                  <li key={link.label}>
+                    <a
+                      href={link.href}
+                      className="text-sm hover:text-white transition-colors duration-200"
+                    >
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
 
-          {/* CTA dodatkowe */}
-          <div className="mt-2">
-            <Link
-              href="/dodaj-usluge"
-              className="inline-block w-full bg-gradient-to-r from-cyan-500 to-blue-500 text-center py-3 rounded-lg font-medium text-white hover:scale-105 transition"
-            >
-              🚀 Dołącz jako specjalista
-            </Link>
+        {/* Newsletter */}
+        <div className="border-t border-gray-800 pt-8 mb-8">
+          <div className="max-w-md">
+            <h3 className="text-white font-semibold mb-2">Newsletter</h3>
+            <p className="text-sm text-gray-400 mb-4">
+              Otrzymuj najnowsze informacje o trendach IT i ofertach specjalnych.
+            </p>
+            <div className="flex gap-2">
+              <input
+                type="email"
+                placeholder="Twój adres e-mail"
+                className="flex-1 px-4 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              />
+              <button className="px-6 py-2 bg-gradient-to-r from-violet-500 to-purple-600 text-white rounded-lg font-medium hover:shadow-lg hover:shadow-purple-500/25 transition-all duration-300">
+                Zapisz się
+              </button>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Dolna belka z gradient border-top */}
-      <div className="mt-10 pt-4 border-t border-gradient-to-r from-purple-600 to-cyan-400 text-center text-gray-500 text-sm flex flex-col md:flex-row justify-center items-center gap-2 z-10 relative">
-        <span>© {new Date().getFullYear()} LuzeN. Wszelkie prawa zastrzeżone.</span>
-        <span>|</span>
-        <Link href="/regulamin" className="hover:text-white transition">Regulamin</Link>
-        <span>|</span>
-        <Link href="/polityka-prywatnosci" className="hover:text-white transition">Polityka prywatności</Link>
-        <span>|</span>
-        <Link href="/cookies" className="hover:text-white transition">Cookies</Link>
+        {/* Bottom Bar */}
+        <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
+          <div className="text-sm text-gray-400 mb-4 md:mb-0">
+            © 2025 LuzeN. Wszystkie prawa zastrzeżone.
+          </div>
+          
+          <div className="flex items-center gap-6">
+            <a href="/privacy" className="text-sm hover:text-white transition-colors duration-200">
+              Polityka prywatności
+            </a>
+            <a href="/terms" className="text-sm hover:text-white transition-colors duration-200">
+              Regulamin
+            </a>
+            <a href="/cookies" className="text-sm hover:text-white transition-colors duration-200">
+              Cookies
+            </a>
+          </div>
+
+          <div className="flex items-center gap-4 mt-4 md:mt-0">
+            {socialLinks.map((social) => (
+              <a
+                key={social.icon}
+                href={social.href}
+                className="w-8 h-8 bg-white/10 backdrop-blur-sm rounded-lg flex items-center justify-center hover:bg-white/20 transition-all duration-200"
+              >
+                <span className="text-xs text-white">{social.icon[0]}</span>
+              </a>
+            ))}
+          </div>
+        </div>
       </div>
     </footer>
   );
-}
+};
+
+export default Footer;
