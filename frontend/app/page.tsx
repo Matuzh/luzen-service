@@ -1,9 +1,19 @@
 import React from 'react'
 
-export default function Home() {
+import HeroSection from '../components/HeroSection';
+import ServicesSection from '../components/ServicesSection';
+import HowItWorksSection from '../components/HowItWorksSection';
+import TrustSection from '../components/TrustSection';
+import CTASection from '../components/CTASection';
+
+export default function HomePage() {
   return (
-    <main>
-      <h1>Hello world!</h1>
-    </main>
-  )
+    <>
+      <HeroSection />
+      <ServicesSection />
+      <HowItWorksSection />
+      <TrustSection />
+      <CTASection />
+    </>
+  );
 }
