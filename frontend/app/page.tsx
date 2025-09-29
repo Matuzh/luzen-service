@@ -1,10 +1,19 @@
 import React from 'react'
-import MainSection from '@/components/MainSection';
+
+import HeroSection from '../components/HeroSection';
+import ServicesSection from '../components/ServicesSection';
+import HowItWorksSection from '../components/HowItWorksSection';
+import TrustSection from '../components/TrustSection';
+import CTASection from '../components/CTASection';
 
 export default function HomePage() {
   return (
-    <div className="px-4 md:px-16 lg:px-32 py-8">
-      <MainSection />
-    </div>
+    <>
+      <HeroSection />
+      <ServicesSection />
+      <HowItWorksSection />
+      <TrustSection />
+      <CTASection />
+    </>
   );
 }

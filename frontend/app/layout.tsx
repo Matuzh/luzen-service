@@ -1,25 +1,18 @@
-import '../styles/globals.css';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
+import "../styles/globals.css";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 export const metadata = {
-  title: 'Marketplace MVP',
-  description: 'Znajdź specjalistę IT w kilka minut',
+  title: "LuzeN - Marketplace IT",
+  description: "Znajdź specjalistę IT dla swojej firmy w kilka minut",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pl">
-      <body className="bg-gray-50 text-gray-900">
-        {/* Navbar zawsze na górze */}
+      <body className="min-h-screen bg-slate-950">
         <Navbar />
-
-        {/* Treść strony */}
-        <main className="min-h-screen">
-          {children}
-        </main>
-
-        {/* Footer zawsze na dole */}
+        <main>{children}</main>
         <Footer />
       </body>
     </html>
