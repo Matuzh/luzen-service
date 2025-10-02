@@ -1,0 +1,37 @@
+version: "3.8"
+services:
+  db:
+    image: postgres:14
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydatabase
+    ports:
+    - "5432:5432"
+    volumes:
+    - db_data:/var/lib/postgresql/data
+  
+  backend:
+    build: ./backend
+    command: npm run dev
+    volumes:
+    - ./backend:/usr/src/app
+    ports:
+    - "3001:3001"
+    depends_on:
+    - db
+
+  frontend:
+    build: ./frontend
+    command: npm run dev
+    volumes:
+    - ./frontend:/usr/src/app
+    - /usr/src/app/node_modules
+    ports:
+    - "3000:3000"
+    env_file: .env
+    depends_on:
+    - backend
+
+volumes:
+  db_data:

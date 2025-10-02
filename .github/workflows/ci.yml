@@ -1,0 +1,39 @@
+name: CI
+
+on: 
+    pull_request:
+        branches:
+            - dev
+            - main
+    
+jobs: 
+    frontend:
+        runs-on: ubuntu-latest
+        defaults:
+            run:
+                working-directory: ./frontend
+        steps:
+            - uses: actions/checkout@v3
+            - uses: actions/setup-node@v3
+              with:
+                  node-version: '20'
+            - run: npm ci
+            - name: Run ESLint, build and tests
+              run: npm run lint
+            - run: npm run build
+            - run: npm test
+    
+    backend:
+        runs-on: ubuntu-latest
+        defaults:
+            run:
+                working-directory: ./backend
+        steps:
+            - uses: actions/checkout@v3
+            - uses: actions/setup-node@v3
+              with:
+                  node-version: '20'
+            - run: npm ci
+            - name: Run build and tests
+              run: npm run build
+            - run: npm test
