@@ -1,6 +1,6 @@
 # LuzeN – Frontend
 
-Frontend aplikacji **LuzeN Marketplace MVP** zbudowany w oparciu o **Next.js 14 (App Router)**, **TypeScript** i **TailwindCSS**.  
+Frontend aplikacji **LuzeN Marketplace MVP** zbudowany w oparciu o **Next.js 15 (App Router)**, **TypeScript** i **TailwindCSS**.  
 Projekt zawiera wstępny layout, stronę główną, strony logowania i rejestracji oraz przykładowe podstrony.  
 
 ---
