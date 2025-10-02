@@ -11,7 +11,7 @@ const TrustSection = () => {
       role: 'CEO',
       content: 'LuzeN znacząco przyspieszyło rozwój naszej firmy. W ciągu miesiąca uruchomiliśmy nową stronę i system CRM.',
       rating: 5,
-      image: '/api/placeholder/64/64'
+      image: 'https://via.placeholder.com/64'
     },
     {
       name: 'Michał Wiśniewski',
@@ -19,7 +19,7 @@ const TrustSection = () => {
       role: 'CTO',
       content: 'Profesjonalni wykonawcy i przejrzysty system rozliczeń. Polecam każdemu MŚP szukającemu wsparcia IT.',
       rating: 5,
-      image: '/api/placeholder/64/64'
+      image: 'https://via.placeholder.com/64'
     },
     {
       name: 'Katarzyna Nowak',
@@ -27,17 +27,17 @@ const TrustSection = () => {
       role: 'Project Manager',
       content: 'Świetna platforma do znajdowania specjalistów. Zrealizowaliśmy już ponad 20 projektów przez LuzeN.',
       rating: 5,
-      image: '/api/placeholder/64/64'
+      image: 'https://via.placeholder.com/64'
     }
   ];
 
   const partners = [
-    { name: 'Microsoft', logo: '/api/placeholder/120/40' },
-    { name: 'Google', logo: '/api/placeholder/120/40' },
-    { name: 'AWS', logo: '/api/placeholder/120/40' },
-    { name: 'Stripe', logo: '/api/placeholder/120/40' },
-    { name: 'Slack', logo: '/api/placeholder/120/40' },
-    { name: 'Figma', logo: '/api/placeholder/120/40' }
+    { name: 'Microsoft', logo: 'https://via.placeholder.com/120x40' },
+    { name: 'Google', logo: 'https://via.placeholder.com/120x40' },
+    { name: 'AWS', logo: 'https://via.placeholder.com/120x40' },
+    { name: 'Stripe', logo: 'https://via.placeholder.com/120x40' },
+    { name: 'Slack', logo: 'https://via.placeholder.com/120x40' },
+    { name: 'Figma', logo: 'https://via.placeholder.com/120x40' }
   ];
 
   return (
