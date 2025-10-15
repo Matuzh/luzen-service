@@ -1,19 +1,19 @@
 import React from 'react'
 
-import HeroSection from '../components/HeroSection';
-import ServicesSection from '../components/ServicesSection';
-import HowItWorksSection from '../components/HowItWorksSection';
-import TrustSection from '../components/TrustSection';
-import CTASection from '../components/CTASection';
+import HeroSection from '../components/Hero';
+import ServicesSection from '../components/Services';
+import Pricing from '../components/Pricing';
+import AboutSection from '../components/About';
+import ContactSection from '../components/Contact'
 
 export default function HomePage() {
   return (
     <>
       <HeroSection />
       <ServicesSection />
-      <HowItWorksSection />
-      <TrustSection />
-      <CTASection />
+      <Pricing />
+      <AboutSection />
+      <ContactSection />
     </>
   );
 }
