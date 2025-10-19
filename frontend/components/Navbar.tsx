@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Cpu, Phone, X, Menu } from '../lib/icons';
 import Link from 'next/link';
+import Image from "next/image";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -15,12 +16,12 @@ const Navbar = () => {
   }, []);
 
   const links = [
-    { label: 'Usługi', href: '#services' },
-    { label: 'Cennik', href: '#pricing' },
-    { label: 'O nas', href: '#about' },
-    { label: 'Kontakt', href: '#contact' },
+    { label: 'Usługi', href: 'uslugi' },
+    { label: 'Cennik', href: 'cennik' },
+    { label: 'O nas', href: 'o-nas' },
+    { label: 'Kontakt', href: 'kontakt' },
     // Future marketplace link placeholder
-    { label: 'Marketplace', href: '#marketplace', badge: 'Wkrótce' }
+    { label: 'Marketplace', href: 'marketplace', badge: 'Wkrótce' }
   ];
 
   return (
@@ -31,10 +32,20 @@ const Navbar = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-violet-500 to-purple-600 rounded-lg flex items-center justify-center">
-              <Cpu className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-xl font-bold text-white">LuzeN</span>
+            <Link href="/" className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-gradient-to-br from-violet-500 to-purple-600 rounded-lg flex items-center justify-center">
+                <div className="w-7 h-7 text-white">
+                  <Image 
+                    src="/images/logo.png" 
+                    alt="LuzeN" 
+                    width={1024}
+                    height={1024}
+                    className={"filter invert"}
+                  /> 
+                </div> 
+              </div>
+              <span className="text-xl font-bold text-white">LuzeN</span>
+            </Link>
           </div>
 
           {/* Desktop Navigation */}
@@ -58,13 +69,15 @@ const Navbar = () => {
 
           {/* CTA Buttons */}
           <div className="hidden md:flex items-center gap-3">
-            <a href="tel:+48123456789" className="px-4 py-2 text-gray-300 hover:text-white transition-colors duration-200 text-sm font-medium flex items-center gap-2">
+            <a href="tel:+48789710406" className="px-4 py-2 text-gray-300 hover:text-white transition-colors duration-200 text-sm font-medium flex items-center gap-2">
               <Phone className="w-4 h-4" />
-              <span>123-456-789</span>
+              <span>789-710-406</span>
             </a>
-            <button className="px-5 py-2 bg-gradient-to-r from-violet-500 to-purple-600 text-white rounded-lg font-medium text-sm hover:shadow-lg hover:shadow-purple-500/25 transition-all duration-300 transform hover:scale-105">
-              Umów wizytę
-            </button>
+            <Link href="/rezerwacja">
+              <button className="px-5 py-2 bg-gradient-to-r from-violet-500 to-purple-600 text-white rounded-lg font-medium text-sm hover:shadow-lg hover:shadow-purple-500/25 transition-all duration-300 transform hover:scale-105">
+                Umów wizytę
+              </button>
+            </Link>
           </div>
 
           {/* Mobile Menu Toggle */}

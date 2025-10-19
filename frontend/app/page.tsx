@@ -5,6 +5,7 @@ import ServicesSection from '../components/Services';
 import Pricing from '../components/Pricing';
 import AboutSection from '../components/About';
 import ContactSection from '../components/Contact'
+import Reviews from '../components/Reviews';
 
 export default function HomePage() {
   return (
@@ -13,6 +14,7 @@ export default function HomePage() {
       <ServicesSection />
       <Pricing />
       <AboutSection />
+      <Reviews />
       <ContactSection />
     </>
   );

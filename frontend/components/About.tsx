@@ -1,36 +1,107 @@
-import React from 'react';
-import { Shield, Clock, ThumbsUp, Users, Package, FileCheck, Heart } from '../lib/icons';
+"use client";
+
+import React, { useEffect, useRef, useState } from 'react';
+import { Shield, Clock, ThumbsUp, Users, Package, Heart } from '../lib/icons';
 
 const AboutSection = () => {
   const benefits = [
-    { icon: Shield, title: 'Gwarancja jakości', description: '6 miesięcy gwarancji na wszystkie naprawy' },
-    { icon: Clock, title: 'Szybka realizacja', description: 'Większość napraw w ciągu 24-48 godzin' },
+    { icon: Shield, title: 'Gwarancja jakości', description: 'Naprawy wykonane rzetelnie i bezpiecznie' },
+    { icon: Clock, title: 'Szybka realizacja', description: 'Większość zgłoszeń obsłużona w ciągu 24-48 godzin' },
     { icon: ThumbsUp, title: 'Uczciwe ceny', description: 'Przejrzysta wycena, bez ukrytych kosztów' },
-    { icon: Users, title: 'Doświadczenie', description: 'Ponad 15 lat w branży IT' }
+    { icon: Users, title: 'Doświadczenie', description: 'Praktyczne doświadczenie w branży IT' }
   ];
 
-  const certifications = [
-    'Microsoft Certified', 'CompTIA A+', 'Cisco CCNA', 'Apple Certified'
+  const stats = [
+    { label: 'Zgłoszenia przyjęte', value: 12, unit: '' },
+    { label: 'Zadowoleni klienci', value: 10, unit: '' },
+    { label: 'Średni czas reakcji', value: 24, unit: 'h' },
+    { label: 'Doświadczenie właściciela', value: 1, unit: ' rok' }
   ];
+
+  const reviews = [
+    { name: 'Anna K.', text: 'Szybko i profesjonalnie naprawili mój laptop. Polecam!' },
+    { name: 'Michał P.', text: 'Świetna obsługa i konkurencyjne ceny. Naprawdę warto!' },
+    { name: 'Katarzyna L.', text: 'Serwis komputerowy, któremu można zaufać. Polecam każdemu.' }
+  ];
+
+  const statRefs = useRef<HTMLSpanElement[]>([]);
+  const [currentReview, setCurrentReview] = useState(0);
+
+  // Animacja liczników
+  useEffect(() => {
+    if (!statRefs.current) return;
+
+    const observers: IntersectionObserver[] = [];
+
+    statRefs.current.forEach((el, idx) => {
+      if (!el) return;
+
+      const observer = new IntersectionObserver(
+        (entries: IntersectionObserverEntry[]) => {
+          const entry = entries[0];
+          if (!entry) return;
+          if (entry.isIntersecting) {
+            let start = 0;
+            const stat = stats[idx];
+            if (!stat) return; // <- zabezpieczenie przed undefined
+
+            const end = stat.value;
+            const unit = stat.unit ?? "";
+            const duration = 1500;
+            const increment = end / (duration / 30);
+
+            const counter = setInterval(() => {
+              start += increment;
+              if (el) el.textContent = `${Math.floor(start)}${unit}`;
+              if (start >= end) {
+                if (el) el.textContent = `${end}${unit}`;
+                clearInterval(counter);
+              }
+            }, 30);
+
+            observer.unobserve(el);
+          }
+        },
+        { threshold: 0.5 }
+      );
+
+      observer.observe(el);
+      observers.push(observer);
+    });
+
+    return () => observers.forEach((obs) => obs.disconnect());
+  }, [statRefs, stats]);
+
+
+
+  // Slider Reviews
+  const nextReview = () => setCurrentReview((prev) => (prev + 1) % reviews.length);
+  const prevReview = () => setCurrentReview((prev) => (prev - 1 + reviews.length) % reviews.length);
 
   return (
-    <section id="about" className="py-20 bg-slate-50">
+    <section id="about" className="py-24 bg-slate-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+        <div className="grid lg:grid-cols-2 gap-16 items-start">
+
+          {/* Left Content */}
           <div>
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6">
+            <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6 leading-tight">
               Dlaczego warto nam zaufać?
             </h2>
-            <p className="text-lg text-gray-600 mb-8">
-              Jesteśmy lokalnym serwisem komputerowym z wieloletnim doświadczeniem. 
-              Specjalizujemy się w kompleksowej obsłudze IT dla firm i klientów indywidualnych.
+            <p className="text-lg text-gray-600 mb-10">
+              Jesteśmy lokalnym serwisem komputerowym stawiającym na profesjonalizm, szybkość i bezpieczeństwo. 
+              Kompleksowa obsługa komputerów, laptopów i sprzętu biurowego – bez ukrytych kosztów.
             </p>
-            
-            <div className="grid sm:grid-cols-2 gap-6 mb-8">
-              {benefits.map((benefit) => (
-                <div key={benefit.title} className="flex gap-4">
-                  <div className="w-12 h-12 bg-gradient-to-br from-violet-500 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0">
-                    <benefit.icon className="w-6 h-6 text-white" />
+
+            {/* Benefits */}
+            <div className="grid sm:grid-cols-2 gap-6 mb-10">
+              {benefits.map((benefit, idx) => (
+                <div
+                  key={benefit.title}
+                  className="flex gap-4 p-4 rounded-xl transition-transform duration-300 hover:-translate-y-1 shadow-sm hover:shadow-md group bg-white"
+                >
+                  <div className="w-14 h-14 bg-gradient-to-br from-violet-500 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform duration-300 group-hover:scale-110">
+                    <benefit.icon className="w-7 h-7 text-white" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900 mb-1">{benefit.title}</h3>
@@ -39,61 +110,53 @@ const AboutSection = () => {
                 </div>
               ))}
             </div>
-            
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-3">Nasze certyfikaty:</h3>
-              <div className="flex flex-wrap gap-3">
-                {certifications.map((cert) => (
-                  <span key={cert} className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-medium">
-                    {cert}
-                  </span>
+
+            {/* CTA */}
+            <div className="mt-8">
+              <a
+                href="/rezerwacja"
+                className="inline-block px-6 py-3 bg-purple-600 text-white font-semibold rounded-lg shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+              >
+                Umów naprawę online
+              </a>
+            </div>
+          </div>
+
+          {/* Right Content */}
+          <div className="space-y-8">
+            {/* Stats Box */}
+            <div className="bg-gradient-to-br from-violet-600 to-purple-700 rounded-2xl p-8 text-white shadow-lg">
+              <h3 className="text-2xl font-bold mb-6">Statystyki serwisu</h3>
+              <div className="grid grid-cols-2 gap-4">
+                {stats.map((stat, idx) => (
+                  <div
+                    key={idx}
+                    className="flex flex-col items-center bg-white/10 rounded-xl p-4 transition-transform duration-300 hover:-translate-y-1"
+                  >
+                    <span ref={el => void (statRefs.current[idx] = el!)} className="text-3xl font-bold">0{stat.unit}</span>
+                    <span className="text-sm text-white/80 mt-1">{stat.label}</span>
+                  </div>
                 ))}
               </div>
             </div>
-          </div>
-          
-          <div className="relative">
-            <div className="bg-gradient-to-br from-violet-600 to-purple-700 rounded-2xl p-8 text-white">
-              <h3 className="text-2xl font-bold mb-6">Statystyki serwisu</h3>
-              <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <span>Naprawione urządzenia</span>
-                  <span className="text-2xl font-bold">5000+</span>
-                </div>
-                <div className="h-px bg-white/20" />
-                <div className="flex justify-between items-center">
-                  <span>Zadowoleni klienci</span>
-                  <span className="text-2xl font-bold">98%</span>
-                </div>
-                <div className="h-px bg-white/20" />
-                <div className="flex justify-between items-center">
-                  <span>Średni czas naprawy</span>
-                  <span className="text-2xl font-bold">24h</span>
-                </div>
-                <div className="h-px bg-white/20" />
-                <div className="flex justify-between items-center">
-                  <span>Lata doświadczenia</span>
-                  <span className="text-2xl font-bold">15+</span>
-                </div>
-              </div>
-            </div>
-            
+
             {/* Trust Badges */}
-            <div className="mt-6 grid grid-cols-3 gap-4">
-              <div className="bg-white rounded-lg p-3 text-center shadow-sm">
+            <div className="grid grid-cols-3 gap-4">
+              <div className="bg-white rounded-lg p-3 text-center shadow-sm hover:shadow-md transition-shadow duration-300">
                 <Package className="w-8 h-8 text-purple-600 mx-auto mb-1" />
-                <span className="text-xs text-gray-600">Części oryginalne</span>
+                <span className="text-xs text-gray-600">Oryginalne części</span>
               </div>
-              <div className="bg-white rounded-lg p-3 text-center shadow-sm">
-                <FileCheck className="w-8 h-8 text-purple-600 mx-auto mb-1" />
-                <span className="text-xs text-gray-600">Faktura VAT</span>
-              </div>
-              <div className="bg-white rounded-lg p-3 text-center shadow-sm">
+              <div className="bg-white rounded-lg p-3 text-center shadow-sm hover:shadow-md transition-shadow duration-300">
                 <Heart className="w-8 h-8 text-purple-600 mx-auto mb-1" />
-                <span className="text-xs text-gray-600">Ekologicznie</span>
+                <span className="text-xs text-gray-600">Bezpieczne naprawy</span>
+              </div>
+              <div className="bg-white rounded-lg p-3 text-center shadow-sm hover:shadow-md transition-shadow duration-300">
+                <Clock className="w-8 h-8 text-purple-600 mx-auto mb-1" />
+                <span className="text-xs text-gray-600">Szybka realizacja</span>
               </div>
             </div>
           </div>
+
         </div>
       </div>
     </section>

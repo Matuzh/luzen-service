@@ -1,112 +1,152 @@
 "use client";
 
-import React from 'react';
-import { CheckCircle } from '../lib/icons';
+import React, { useEffect } from "react";
+import Link from "next/link";
+import { CheckCircle } from "../lib/icons";
 
 const PricingSection = () => {
   const packages = [
     {
-      name: 'Podstawowy',
-      price: '199',
-      period: 'jednorazowo',
-      description: 'Dla użytkowników domowych',
+      name: "Diagnoza i naprawa",
+      price: "od 80 zł",
+      period: "za usługę",
+      description: "Najczęściej wybierany pakiet serwisowy",
       features: [
-        'Diagnostyka komputera',
-        'Usunięcie wirusów',
-        'Optymalizacja systemu',
-        'Instalacja 5 programów',
-        'Wsparcie przez 7 dni'
+        "Pełna diagnostyka sprzętu i oprogramowania",
+        "Naprawa usterek sprzętowych i systemowych",
+        "Czyszczenie i konserwacja komputera",
+        "Wymiana dysków, pamięci RAM, zasilaczy itp.",
+        "Aktualizacje systemu i oprogramowania",
       ],
-      highlighted: false
+      highlighted: true,
     },
     {
-      name: 'Biznes',
-      price: '499',
-      period: '/miesiąc',
-      description: 'Dla małych firm',
+      name: "Instalacja systemów i oprogramowania",
+      price: "od 150 zł",
+      period: "za instalację",
+      description: "Kompleksowa konfiguracja systemu i programów",
       features: [
-        'Obsługa do 10 komputerów',
-        'Priorytetowe wsparcie 24/7',
-        'Backup danych w chmurze',
-        'Monitoring bezpieczeństwa',
-        'Konsultacje IT',
-        'Czas reakcji: 2h'
+        "Instalacja systemu Windows / Linux",
+        "Konfiguracja sterowników i zabezpieczeń",
+        "Instalacja pakietów biurowych i narzędzi",
+        "Ustawienia prywatności i wydajności",
+        "Optymalizacja działania systemu",
       ],
-      highlighted: true
+      highlighted: false,
     },
     {
-      name: 'Enterprise',
-      price: 'Indywidualnie',
-      period: '',
-      description: 'Dla dużych firm',
+      name: "Obsługa firm i stała opieka IT",
+      price: "Indywidualna wycena",
+      period: "",
+      description: "Dla małych firm — wkrótce dostępne",
       features: [
-        'Nieograniczona liczba urządzeń',
-        'Dedykowany opiekun',
-        'SLA 99.9%',
-        'Audyty bezpieczeństwa',
-        'Szkolenia pracowników',
-        'Rozwój oprogramowania'
+        "Zdalna pomoc techniczna i doradztwo IT",
+        "Monitoring komputerów i systemów",
+        "Tworzenie kopii zapasowych danych",
+        "Audyt i zabezpieczenie sieci firmowej",
+        "Priorytetowy czas reakcji",
+        "Faktury VAT (w przygotowaniu)",
       ],
-      highlighted: false
-    }
+      highlighted: false,
+    },
   ];
 
+  useEffect(() => {
+  // Upewnij się, że kod wykona się dopiero po załadowaniu przeglądarki
+  const timeout = setTimeout(() => {
+    try {
+      if (typeof window !== "undefined" && (window as any).adsbygoogle) {
+        (window as any).adsbygoogle.push({});
+      }
+    } catch (e) {
+      console.warn("AdSense init failed:", e);
+    }
+  }, 1000); // małe opóźnienie daje czas na załadowanie skryptu
+
+  return () => clearTimeout(timeout);
+}, []);
+
   return (
-    <section id="pricing" className="py-20 bg-gradient-to-br from-slate-950 via-purple-950/10 to-slate-950">
+    <section
+      id="pricing"
+      className="py-24 bg-gradient-to-br from-slate-950 via-purple-950/20 to-slate-950"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
-            Cennik usług
+        {/* Nagłówek */}
+        <div className="text-center mb-16">
+          <h2 className="text-4xl font-bold text-white mb-4">
+            Cennik usług serwisowych
           </h2>
           <p className="text-lg text-gray-400 max-w-2xl mx-auto">
-            Przejrzyste ceny bez ukrytych kosztów. Wybierz pakiet dostosowany do Twoich potrzeb.
+            Uczciwe i przejrzyste ceny – wycena przed rozpoczęciem naprawy.
           </p>
         </div>
 
+        {/* Karty */}
         <div className="grid md:grid-cols-3 gap-8">
           {packages.map((pkg) => (
-            <div 
+            <div
               key={pkg.name}
-              className={`relative rounded-2xl p-8 ${
-                pkg.highlighted 
-                  ? 'bg-gradient-to-br from-violet-600 to-purple-700 text-white scale-105' 
-                  : 'bg-white/5 backdrop-blur-sm border border-white/10 text-white'
+              className={`relative rounded-2xl p-8 transition-all duration-300 hover:scale-[1.02] ${
+                pkg.highlighted
+                  ? "bg-gradient-to-br from-violet-600/90 via-purple-700/80 to-indigo-700/80 text-white shadow-[0_0_30px_rgba(139,92,246,0.35)] border border-violet-500/40"
+                  : "bg-white/5 backdrop-blur-lg border border-white/10 text-white hover:border-violet-500/40 hover:shadow-[0_0_20px_rgba(139,92,246,0.2)]"
               }`}
             >
               {pkg.highlighted && (
-                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 px-4 py-1 bg-yellow-400 text-gray-900 text-sm font-bold rounded-full">
-                  REKOMENDOWANE
-                </div>
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-tr from-purple-500/10 to-violet-600/10 blur-2xl -z-10"></div>
               )}
-              
+
               <div className="mb-6">
-                <h3 className="text-2xl font-bold mb-2">{pkg.name}</h3>
-                <p className="text-sm opacity-80">{pkg.description}</p>
+                <h3 className="text-2xl font-semibold mb-2 tracking-tight">
+                  {pkg.name}
+                </h3>
+                <p className="text-sm text-gray-300/90">{pkg.description}</p>
               </div>
-              
+
               <div className="mb-6">
                 <span className="text-4xl font-bold">{pkg.price}</span>
-                {pkg.period && <span className="text-sm opacity-80"> {pkg.period}</span>}
+                {pkg.period && (
+                  <span className="text-sm opacity-80"> {pkg.period}</span>
+                )}
               </div>
-              
+
               <ul className="space-y-3 mb-8">
                 {pkg.features.map((feature) => (
                   <li key={feature} className="flex items-start gap-3">
                     <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm">{feature}</span>
+                    <span className="text-sm text-gray-200">{feature}</span>
                   </li>
                 ))}
               </ul>
-              
-              <button className={`w-full px-6 py-3 rounded-lg font-semibold transition-all duration-300 ${
-                pkg.highlighted
-                  ? 'bg-white text-purple-700 hover:shadow-xl'
-                  : 'bg-gradient-to-r from-violet-500 to-purple-600 text-white hover:shadow-lg hover:shadow-purple-500/25'
-              }`}>
-                Wybierz pakiet
-              </button>
+
+              <Link href="/rezerwacja">
+                <button
+                  className={`w-full px-6 py-3 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2 ${
+                    pkg.highlighted
+                      ? "bg-white text-purple-700 hover:shadow-[0_0_25px_rgba(255,255,255,0.5)] hover:scale-[1.02] animate-[pulse_3s_infinite]"
+                      : "bg-gradient-to-r from-violet-500 to-purple-600 text-white hover:shadow-[0_0_20px_rgba(139,92,246,0.4)]"
+                  }`}
+                >
+                  Umów wizytę
+                </button>
+              </Link>
             </div>
           ))}
+        </div>
+
+        {/* AdSense */}
+        <div className="mt-20 text-center">
+          <div className="mx-auto max-w-3xl bg-white/5 border border-white/10 rounded-xl py-6 px-4 text-gray-400 text-sm">
+            <ins
+              className="adsbygoogle"
+              style={{ display: "block", textAlign: "center" }}
+              data-ad-client="ca-pub-4664379142833849"
+              data-ad-slot="1234567890"
+              data-ad-format="auto"
+              data-full-width-responsive="true"
+            />
+          </div>
         </div>
       </div>
     </section>
