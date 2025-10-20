@@ -1,9 +1,10 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Cpu, Phone, X, Menu } from '../lib/icons';
+import { Phone, X, Menu } from '../lib/icons';
 import Link from 'next/link';
 import Image from "next/image";
+import { CONTACT_INFO } from '../lib/constants';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -15,14 +16,59 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Close mobile menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (isOpen && !(event.target as Element).closest('nav')) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, [isOpen]);
+
+  // Prevent body scroll when mobile menu is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
+
   const links = [
-    { label: 'Usługi', href: 'uslugi' },
-    { label: 'Cennik', href: 'cennik' },
-    { label: 'O nas', href: 'o-nas' },
-    { label: 'Kontakt', href: 'kontakt' },
-    // Future marketplace link placeholder
-    { label: 'Marketplace', href: 'marketplace', badge: 'Wkrótce' }
+    { label: 'Usługi', href: '#uslugi' },
+    { label: 'Cennik', href: '#cennik' },
+    { label: 'O nas', href: '#o-nas' },
+    { label: 'Kontakt', href: '#kontakt' },
+    { label: 'Marketplace', href: '#marketplace', badge: 'Wkrótce', disabled: true }
   ];
+
+  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string, disabled?: boolean) => {
+    if (disabled) {
+      e.preventDefault();
+      return;
+    }
+    
+    setIsOpen(false);
+    
+    if (href.startsWith('#')) {
+      e.preventDefault();
+      const element = document.getElementById(href.substring(1));
+      if (element) {
+        const offset = 80; // navbar height
+        const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+        window.scrollTo({
+          top: elementPosition - offset,
+          behavior: 'smooth'
+        });
+      }
+    }
+  };
 
   return (
     <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${
@@ -32,15 +78,15 @@ const Navbar = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex items-center gap-2">
-            <Link href="/" className="flex items-center gap-2">
+            <Link href="/" className="flex items-center gap-2" onClick={() => setIsOpen(false)}>
               <div className="w-8 h-8 bg-gradient-to-br from-violet-500 to-purple-600 rounded-lg flex items-center justify-center">
                 <div className="w-7 h-7 text-white">
                   <Image 
                     src="/images/logo.png" 
                     alt="LuzeN" 
-                    width={1024}
-                    height={1024}
-                    className={"filter invert"}
+                    width={28}
+                    height={28}
+                    className="filter invert"
                   /> 
                 </div> 
               </div>
@@ -54,24 +100,32 @@ const Navbar = () => {
               <a
                 key={link.href}
                 href={link.href}
-                className="relative text-gray-300 hover:text-white transition-colors duration-200 text-sm font-medium group"
+                onClick={(e) => handleLinkClick(e, link.href, link.disabled)}
+                className={`relative text-gray-300 hover:text-white transition-colors duration-200 text-sm font-medium group ${
+                  link.disabled ? 'cursor-not-allowed opacity-50' : ''
+                }`}
               >
                 {link.label}
                 {link.badge && (
-                  <span className="absolute -top-2 -right-10 px-1.5 py-0.5 bg-gradient-to-r from-violet-500 to-purple-600 text-white text-xs rounded-full">
+                  <span className="absolute -top-2 -right-10 px-1.5 py-0.5 bg-gradient-to-r from-violet-500 to-purple-600 text-white text-xs rounded-full whitespace-nowrap">
                     {link.badge}
                   </span>
                 )}
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-violet-500 to-purple-600 transition-all duration-300 group-hover:w-full" />
+                {!link.disabled && (
+                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-violet-500 to-purple-600 transition-all duration-300 group-hover:w-full" />
+                )}
               </a>
             ))}
           </div>
 
           {/* CTA Buttons */}
           <div className="hidden md:flex items-center gap-3">
-            <a href="tel:+48789710406" className="px-4 py-2 text-gray-300 hover:text-white transition-colors duration-200 text-sm font-medium flex items-center gap-2">
+            <a 
+              href={`tel:${CONTACT_INFO.phone}`} 
+              className="px-4 py-2 text-gray-300 hover:text-white transition-colors duration-200 text-sm font-medium flex items-center gap-2"
+            >
               <Phone className="w-4 h-4" />
-              <span>789-710-406</span>
+              <span>{CONTACT_INFO.phoneFormatted}</span>
             </a>
             <Link href="/rezerwacja">
               <button className="px-5 py-2 bg-gradient-to-r from-violet-500 to-purple-600 text-white rounded-lg font-medium text-sm hover:shadow-lg hover:shadow-purple-500/25 transition-all duration-300 transform hover:scale-105">
@@ -82,8 +136,12 @@ const Navbar = () => {
 
           {/* Mobile Menu Toggle */}
           <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden text-white p-2"
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsOpen(!isOpen);
+            }}
+            className="md:hidden text-white p-2 z-50"
+            aria-label="Toggle menu"
           >
             {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -91,26 +149,34 @@ const Navbar = () => {
 
         {/* Mobile Menu */}
         {isOpen && (
-          <div className="md:hidden bg-slate-900/95 backdrop-blur-lg rounded-b-2xl shadow-xl">
-            <div className="px-4 py-6 space-y-3">
+          <div className="md:hidden fixed inset-0 top-16 bg-slate-900/95 backdrop-blur-lg">
+            <div className="px-4 py-6 space-y-3 max-w-md mx-auto">
               {links.map((link) => (
                 <a
                   key={link.href}
                   href={link.href}
-                  className="block px-4 py-2 text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-all duration-200"
+                  onClick={(e) => handleLinkClick(e, link.href, link.disabled)}
+                  className={`block px-4 py-3 text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-all duration-200 ${
+                    link.disabled ? 'cursor-not-allowed opacity-50' : ''
+                  }`}
                 >
                   {link.label}
                   {link.badge && <span className="ml-2 text-xs text-purple-400">({link.badge})</span>}
                 </a>
               ))}
               <div className="pt-4 space-y-3 border-t border-white/10">
-                <a href="tel:+48123456789" className="flex items-center gap-2 px-4 py-2 text-gray-300">
+                <a 
+                  href={`tel:${CONTACT_INFO.phone}`} 
+                  className="flex items-center gap-2 px-4 py-3 text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-all duration-200"
+                >
                   <Phone className="w-4 h-4" />
-                  123-456-789
+                  {CONTACT_INFO.phoneFormatted}
                 </a>
-                <button className="w-full px-5 py-2 bg-gradient-to-r from-violet-500 to-purple-600 text-white rounded-lg font-medium">
-                  Umów wizytę
-                </button>
+                <Link href="/rezerwacja" onClick={() => setIsOpen(false)}>
+                  <button className="w-full px-5 py-3 bg-gradient-to-r from-violet-500 to-purple-600 text-white rounded-lg font-medium">
+                    Umów wizytę
+                  </button>
+                </Link>
               </div>
             </div>
           </div>

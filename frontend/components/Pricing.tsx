@@ -1,151 +1,176 @@
 "use client";
 
-import React, { useEffect } from "react";
-import Link from "next/link";
-import { CheckCircle } from "../lib/icons";
+import React, { useState } from 'react';
+import { Check, Star, ArrowRight } from '../lib/icons';
+import Link from 'next/link';
+import { PRICING_TIERS } from '../lib/constants';
 
-const PricingSection = () => {
-  const packages = [
-    {
-      name: "Diagnoza i naprawa",
-      price: "od 80 zł",
-      period: "za usługę",
-      description: "Najczęściej wybierany pakiet serwisowy",
-      features: [
-        "Pełna diagnostyka sprzętu i oprogramowania",
-        "Naprawa usterek sprzętowych i systemowych",
-        "Czyszczenie i konserwacja komputera",
-        "Wymiana dysków, pamięci RAM, zasilaczy itp.",
-        "Aktualizacje systemu i oprogramowania",
-      ],
-      highlighted: true,
-    },
-    {
-      name: "Instalacja systemów i oprogramowania",
-      price: "od 150 zł",
-      period: "za instalację",
-      description: "Kompleksowa konfiguracja systemu i programów",
-      features: [
-        "Instalacja systemu Windows / Linux",
-        "Konfiguracja sterowników i zabezpieczeń",
-        "Instalacja pakietów biurowych i narzędzi",
-        "Ustawienia prywatności i wydajności",
-        "Optymalizacja działania systemu",
-      ],
-      highlighted: false,
-    },
-    {
-      name: "Obsługa firm i stała opieka IT",
-      price: "Indywidualna wycena",
-      period: "",
-      description: "Dla małych firm — wkrótce dostępne",
-      features: [
-        "Zdalna pomoc techniczna i doradztwo IT",
-        "Monitoring komputerów i systemów",
-        "Tworzenie kopii zapasowych danych",
-        "Audyt i zabezpieczenie sieci firmowej",
-        "Priorytetowy czas reakcji",
-        "Faktury VAT (w przygotowaniu)",
-      ],
-      highlighted: false,
-    },
-  ];
-
-  useEffect(() => {
-  // Upewnij się, że kod wykona się dopiero po załadowaniu przeglądarki
-  const timeout = setTimeout(() => {
-    try {
-      if (typeof window !== "undefined" && (window as any).adsbygoogle) {
-        (window as any).adsbygoogle.push({});
-      }
-    } catch (e) {
-      console.warn("AdSense init failed:", e);
-    }
-  }, 1000); // małe opóźnienie daje czas na załadowanie skryptu
-
-  return () => clearTimeout(timeout);
-}, []);
+const Pricing = () => {
+  const [selectedTier, setSelectedTier] = useState<string | null>('standard');
 
   return (
-    <section
-      id="pricing"
-      className="py-24 bg-gradient-to-br from-slate-950 via-purple-950/20 to-slate-950"
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Nagłówek */}
+    <section id="cennik" className="py-24 bg-gradient-to-b from-slate-950 to-slate-900 relative overflow-hidden">
+      {/* Background decoration */}
+      <div className="absolute inset-0">
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-violet-500/10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        {/* Section Header */}
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-white mb-4">
-            Cennik usług serwisowych
+          <div className="inline-block px-4 py-2 bg-purple-500/10 border border-purple-500/20 rounded-full text-purple-300 text-sm mb-4">
+            Cennik
+          </div>
+          <h2 className="text-4xl sm:text-5xl font-bold text-white mb-6">
+            Przejrzyste ceny
+            <span className="block bg-gradient-to-r from-violet-400 to-purple-600 bg-clip-text text-transparent">
+              bez ukrytych kosztów
+            </span>
           </h2>
-          <p className="text-lg text-gray-400 max-w-2xl mx-auto">
-            Uczciwe i przejrzyste ceny – wycena przed rozpoczęciem naprawy.
+          <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+            Wybierz pakiet odpowiedni dla Twoich potrzeb. Każda naprawa wyceniana jest indywidualnie.
           </p>
         </div>
 
-        {/* Karty */}
-        <div className="grid md:grid-cols-3 gap-8">
-          {packages.map((pkg) => (
-            <div
-              key={pkg.name}
-              className={`relative rounded-2xl p-8 transition-all duration-300 hover:scale-[1.02] ${
-                pkg.highlighted
-                  ? "bg-gradient-to-br from-violet-600/90 via-purple-700/80 to-indigo-700/80 text-white shadow-[0_0_30px_rgba(139,92,246,0.35)] border border-violet-500/40"
-                  : "bg-white/5 backdrop-blur-lg border border-white/10 text-white hover:border-violet-500/40 hover:shadow-[0_0_20px_rgba(139,92,246,0.2)]"
-              }`}
-            >
-              {pkg.highlighted && (
-                <div className="absolute inset-0 rounded-2xl bg-gradient-to-tr from-purple-500/10 to-violet-600/10 blur-2xl -z-10"></div>
-              )}
+        {/* Pricing Cards */}
+        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          {PRICING_TIERS.map((tier) => {
+            const isSelected = selectedTier === tier.id;
+            const isPopular = tier.popular;
 
-              <div className="mb-6">
-                <h3 className="text-2xl font-semibold mb-2 tracking-tight">
-                  {pkg.name}
-                </h3>
-                <p className="text-sm text-gray-300/90">{pkg.description}</p>
-              </div>
+            return (
+              <div
+                key={tier.id}
+                onMouseEnter={() => setSelectedTier(tier.id)}
+                onMouseLeave={() => setSelectedTier(isPopular ? 'standard' : null)}
+                className={`relative bg-gradient-to-br backdrop-blur-sm rounded-2xl p-8 transition-all duration-300 ${
+                  isPopular
+                    ? 'from-violet-900/30 to-purple-900/30 border-2 border-purple-500 shadow-xl shadow-purple-500/20 md:-translate-y-4 md:scale-105'
+                    : isSelected
+                    ? 'from-slate-800/50 to-slate-900/50 border-2 border-purple-500/50 transform -translate-y-2'
+                    : 'from-slate-800/30 to-slate-900/30 border border-white/10'
+                }`}
+              >
+                {/* Popular Badge */}
+                {isPopular && (
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                    <div className="flex items-center gap-1 px-4 py-1.5 bg-gradient-to-r from-violet-500 to-purple-600 rounded-full text-white text-sm font-semibold shadow-lg">
+                      <Star className="w-4 h-4 fill-current" />
+                      Najpopularniejszy
+                    </div>
+                  </div>
+                )}
 
-              <div className="mb-6">
-                <span className="text-4xl font-bold">{pkg.price}</span>
-                {pkg.period && (
-                  <span className="text-sm opacity-80"> {pkg.period}</span>
+                {/* Tier Name */}
+                <div className="mb-6">
+                  <h3 className={`text-2xl font-bold mb-2 ${
+                    isPopular ? 'text-purple-300' : 'text-white'
+                  }`}>
+                    {tier.name}
+                  </h3>
+                  <p className="text-gray-400 text-sm">{tier.description}</p>
+                </div>
+
+                {/* Price */}
+                <div className="mb-6">
+                  <div className={`text-4xl font-bold ${
+                    isPopular ? 'text-white' : 'text-gray-100'
+                  }`}>
+                    {tier.price}
+                  </div>
+                  <div className="text-gray-400 text-sm mt-1">
+                    {tier.id === 'basic' ? 'jednorazowo' : 'w zależności od usterki'}
+                  </div>
+                </div>
+
+                {/* Features */}
+                <ul className="space-y-3 mb-8">
+                  {tier.features.map((feature, idx) => (
+                    <li key={idx} className="flex items-start gap-3">
+                      <div className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 ${
+                        isPopular ? 'bg-purple-500' : 'bg-white/10'
+                      }`}>
+                        <Check className={`w-3 h-3 ${
+                          isPopular ? 'text-white' : 'text-purple-400'
+                        }`} />
+                      </div>
+                      <span className="text-gray-300 text-sm">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                {/* CTA Button */}
+                <Link href="/rezerwacja">
+                  <button className={`w-full py-4 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 ${
+                    isPopular
+                      ? 'bg-gradient-to-r from-violet-500 to-purple-600 text-white shadow-lg shadow-purple-500/30 hover:shadow-purple-500/50 hover:scale-105'
+                      : 'bg-white/5 text-gray-300 border border-white/10 hover:bg-white/10 hover:border-purple-500/30'
+                  }`}>
+                    Wybierz pakiet
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </Link>
+
+                {/* Glow effect for selected */}
+                {(isSelected || isPopular) && (
+                  <div className="absolute inset-0 bg-gradient-to-br from-violet-500/5 to-purple-600/5 rounded-2xl -z-10 blur-xl"></div>
                 )}
               </div>
+            );
+          })}
+        </div>
 
-              <ul className="space-y-3 mb-8">
-                {pkg.features.map((feature) => (
-                  <li key={feature} className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm text-gray-200">{feature}</span>
-                  </li>
-                ))}
-              </ul>
-
-              <Link href="/rezerwacja">
-                <button
-                  className={`w-full px-6 py-3 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2 ${
-                    pkg.highlighted
-                      ? "bg-white text-purple-700 hover:shadow-[0_0_25px_rgba(255,255,255,0.5)] hover:scale-[1.02] animate-[pulse_3s_infinite]"
-                      : "bg-gradient-to-r from-violet-500 to-purple-600 text-white hover:shadow-[0_0_20px_rgba(139,92,246,0.4)]"
-                  }`}
-                >
-                  Umów wizytę
-                </button>
-              </Link>
+        {/* Additional Info */}
+        <div className="mt-16 grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+          {[
+            {
+              title: 'Gwarancja na naprawy',
+              desc: '30-90 dni gwarancji w zależności od pakietu',
+              icon: '✓'
+            },
+            {
+              title: 'Oryginalne części',
+              desc: 'Używamy tylko certyfikowanych podzespołów',
+              icon: '★'
+            },
+            {
+              title: 'Elastyczna płatność',
+              desc: 'Gotówka, karta, przelew lub BLIK',
+              icon: '💳'
+            }
+          ].map((item, idx) => (
+            <div
+              key={idx}
+              className="bg-gradient-to-br from-slate-800/30 to-slate-900/30 backdrop-blur-sm border border-white/10 rounded-xl p-6 text-center hover:border-purple-500/30 transition-all duration-300"
+            >
+              <div className="text-3xl mb-3">{item.icon}</div>
+              <h4 className="text-white font-semibold mb-2">{item.title}</h4>
+              <p className="text-gray-400 text-sm">{item.desc}</p>
             </div>
           ))}
         </div>
 
-        {/* AdSense */}
-        <div className="mt-20 text-center">
-          <div className="mx-auto max-w-3xl bg-white/5 border border-white/10 rounded-xl py-6 px-4 text-gray-400 text-sm">
-            <ins
-              className="adsbygoogle"
-              style={{ display: "block", textAlign: "center" }}
-              data-ad-client="ca-pub-4664379142833849"
-              data-ad-slot="1234567890"
-              data-ad-format="auto"
-              data-full-width-responsive="true"
-            />
+        {/* FAQ Teaser */}
+        <div className="mt-16 bg-gradient-to-r from-slate-800/50 to-slate-900/50 backdrop-blur-sm border border-white/10 rounded-2xl p-8 text-center">
+          <h3 className="text-2xl font-bold text-white mb-4">
+            Masz pytania dotyczące cen?
+          </h3>
+          <p className="text-gray-300 mb-6 max-w-2xl mx-auto">
+            Każda naprawa jest wyceniana indywidualnie po diagnostyce. 
+            Skontaktuj się z nami, aby uzyskać dokładną wycenę.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link href="#kontakt">
+              <button className="px-8 py-3 bg-gradient-to-r from-violet-500 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-purple-500/25 transition-all duration-300">
+                Zapytaj o wycenę
+              </button>
+            </Link>
+            <a href={`tel:${process.env.NEXT_PUBLIC_PHONE || '+48789710406'}`}>
+              <button className="px-8 py-3 bg-white/5 border border-white/10 text-white rounded-xl font-semibold hover:bg-white/10 transition-all duration-300">
+                Zadzwoń: 789-710-406
+              </button>
+            </a>
           </div>
         </div>
       </div>
@@ -153,4 +178,4 @@ const PricingSection = () => {
   );
 };
 
-export default PricingSection;
+export default Pricing;
