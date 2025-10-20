@@ -1,184 +1,169 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import { Zap, Star, Clock, CheckCircle, Calendar, Phone } from '../lib/icons.js'; // pamiętaj o .js dla Node16/Next
+import React, { useEffect, useState } from 'react';
+import { Laptop, Monitor, HardDrive, Wrench, Phone, ChevronDown } from '../lib/icons';
+import Link from 'next/link';
+import { CONTACT_INFO } from '../lib/constants';
 
 const HeroSection = () => {
-  const [activeService, setActiveService] = useState(0);
-  const [fade, setFade] = useState(true);
+  const [mounted, setMounted] = useState(false);
+  const [currentFeature, setCurrentFeature] = useState(0);
 
-  const services = [
-    'Naprawa komputerów – szybko i bezpiecznie', 
-    'Serwis i czyszczenie laptopów – pełna optymalizacja', 
-    'Odzyskiwanie danych – bez utraty informacji', 
-    'Instalacja oprogramowania – profesjonalnie', 
-    'Czyszczenie wirusów i optymalizacja – pełna ochrona'
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const features = [
+    { icon: Laptop, text: 'Naprawa laptopów' },
+    { icon: Monitor, text: 'Serwis komputerów' },
+    { icon: HardDrive, text: 'Odzyskiwanie danych' },
+    { icon: Wrench, text: 'Instalacja systemów' }
   ];
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setFade(false);
-      setTimeout(() => {
-        setActiveService((prev) => (prev + 1) % services.length);
-        setFade(true);
-      }, 300); // fade-out duration
-    }, 4000);
+      setCurrentFeature((prev) => (prev + 1) % features.length);
+    }, 3000);
     return () => clearInterval(interval);
-  }, []);
+  }, [features.length]);
 
-  const stats = [
-    { value: 'Wsparcie zdalne', label: 'Dostępność online', icon: Clock },
-    { value: 'Uczciwe ceny', label: 'Rzetelność', icon: CheckCircle },
-    { value: 'Bezpieczne naprawy', label: 'Profesjonalizm', icon: Star }
-  ];
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      const offset = 80;
+      const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+      window.scrollTo({
+        top: elementPosition - offset,
+        behavior: 'smooth'
+      });
+    }
+  };
 
   return (
-    <section className="relative min-h-screen bg-gradient-to-br from-slate-950 via-purple-950/20 to-slate-950 overflow-hidden">
-      {/* Animated Background */}
-      <div className="absolute inset-0">
-        <div className="absolute top-0 -left-4 w-72 h-72 bg-purple-700 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob" />
-        <div className="absolute top-0 -right-4 w-72 h-72 bg-violet-700 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000" />
-        <div className="absolute -bottom-8 left-20 w-72 h-72 bg-pink-700 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000" />
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-slate-950 via-purple-950/20 to-slate-950">
+      {/* Animated background */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute -inset-[10px] opacity-50">
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500/30 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-violet-500/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        </div>
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-20">
+      {/* Grid pattern overlay */}
+      <div className="absolute inset-0 bg-[url('/images/grid.svg')] opacity-10"></div>
+
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Content */}
-          <div>
-            {/* Trust / Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-sm rounded-full border border-white/10 mb-6">
-              <Zap className="w-4 h-4 text-yellow-400" aria-hidden="true" />
-              <span className="text-sm text-gray-300">Ekspresowy i bezpieczny serwis komputerowy</span>
+          <div className={`space-y-8 transition-all duration-1000 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-500/10 border border-purple-500/20 rounded-full text-purple-300 text-sm">
+              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+              Profesjonalny serwis komputerowy
             </div>
 
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-6 leading-tight">
-              Profesjonalny serwis komputerowy
-              <span
-                className={`block text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-purple-400 mt-2 transition-opacity duration-300 ${fade ? 'opacity-100' : 'opacity-0'}`}
-              >
-                {services[activeService]}
+            {/* Heading */}
+            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white leading-tight">
+              Naprawiamy
+              <span className="block bg-gradient-to-r from-violet-400 to-purple-600 bg-clip-text text-transparent">
+                Twój sprzęt
               </span>
+              szybko i profesjonalnie
             </h1>
 
-            <p className="text-xl text-gray-300 mb-8">
-              Szybka i rzetelna naprawa sprzętu komputerowego i laptopów. 
-              Pomoc zdalna, instalacja oprogramowania, czyszczenie wirusów. 
-              Gwarancja uczciwych cen i bezpiecznych napraw.
+            {/* Description */}
+            <p className="text-xl text-gray-300 leading-relaxed">
+              Kompleksowy serwis komputerów, laptopów i sprzętu IT. 
+              Działamy wyłącznie na rezerwacje – bez kolejek, z pełnym profesjonalizmem.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 mb-6 sm:mb-12">
-              <a
-                href="tel:+48789710406"
-                aria-label="Zadzwoń do serwisu komputerowego"
-                className="px-8 py-3 bg-gradient-to-r from-violet-500 to-purple-600 text-white rounded-lg font-semibold hover:shadow-lg hover:shadow-purple-500/25 transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-violet-500 flex items-center justify-center gap-2"
-              >
-                <Phone className="w-5 h-5" aria-hidden="true" />
-                Zadzwoń teraz
-              </a>
-              <a
-                href="rezerwacja"
-                aria-label="Umów wizytę online w serwisie komputerowym"
-                className="px-8 py-3 bg-white/10 backdrop-blur-sm border border-white/20 text-white rounded-lg font-semibold hover:bg-white/20 transition-all duration-300 flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-violet-500"
-              >
-                <Calendar className="w-5 h-5" aria-hidden="true" />
-                Umów wizytę online
+            {/* Features */}
+            <div className="grid grid-cols-2 gap-4">
+              {features.map((feature, idx) => (
+                <div
+                  key={idx}
+                  className={`flex items-center gap-3 p-4 rounded-xl transition-all duration-500 ${
+                    currentFeature === idx
+                      ? 'bg-gradient-to-r from-violet-500/20 to-purple-600/20 border border-purple-500/30 scale-105'
+                      : 'bg-white/5 border border-white/10'
+                  }`}
+                >
+                  <feature.icon className={`w-6 h-6 ${currentFeature === idx ? 'text-purple-400' : 'text-gray-400'}`} />
+                  <span className={`text-sm font-medium ${currentFeature === idx ? 'text-white' : 'text-gray-300'}`}>
+                    {feature.text}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 pt-4">
+              <Link href="/rezerwacja">
+                <button className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-violet-500 to-purple-600 text-white rounded-xl font-semibold text-lg shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 transition-all duration-300 transform hover:scale-105 hover:-translate-y-1">
+                  Umów wizytę online
+                </button>
+              </Link>
+              <a href={`tel:${CONTACT_INFO.phone}`}>
+                <button className="w-full sm:w-auto px-8 py-4 bg-white/10 backdrop-blur-sm border border-white/20 text-white rounded-xl font-semibold text-lg hover:bg-white/20 transition-all duration-300 flex items-center justify-center gap-2">
+                  <Phone className="w-5 h-5" />
+                  Zadzwoń teraz
+                </button>
               </a>
             </div>
 
-            {/* Professional Trust Section */}
-            <div className="bg-purple-700/10 backdrop-blur-sm border border-purple-700/20 rounded-xl p-4 mb-8">
-              <div className="flex items-center gap-3">
-                <Clock className="w-6 h-6 text-purple-400" aria-hidden="true" />
-                <div>
-                  <div className="text-white font-semibold">Szybka odpowiedź</div>
-                  <div className="text-sm text-gray-300">Odpowiadamy w ciągu 30 minut w godzinach pracy</div>
-                </div>
+            {/* Trust indicators */}
+            <div className="flex items-center gap-8 pt-4">
+              <div className="text-center">
+                <div className="text-3xl font-bold text-white">12+</div>
+                <div className="text-sm text-gray-400">Napraw</div>
+              </div>
+              <div className="w-px h-12 bg-white/10"></div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-white">24-48h</div>
+                <div className="text-sm text-gray-400">Realizacji</div>
+              </div>
+              <div className="w-px h-12 bg-white/10"></div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-white">100%</div>
+                <div className="text-sm text-gray-400">Zadowolonych</div>
               </div>
             </div>
           </div>
 
-          {/* Right Content - Service Form */}
-          <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-8">
-            <h3 className="text-2xl font-bold text-white mb-6">Zgłoś usterkę online</h3>
-            
-            <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
-              <div>
-                <label htmlFor="deviceType" className="block text-sm text-gray-400 mb-2">Rodzaj urządzenia</label>
-                <select
-                  id="deviceType"
-                  required
-                  aria-required="true"
-                  className="w-full px-4 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-violet-500"
-                >
-                  <option value="pc" className="text-black">Komputer stacjonarny</option>
-                  <option value="laptop" className="text-black">Laptop</option>
-                  <option value="server" className="text-black">Serwer</option>
-                  <option value="other" className="text-black">Inne</option>
-                </select>
-              </div>
-              
-              <div>
-                <label htmlFor="problemDescription" className="block text-sm text-gray-400 mb-2">Opis problemu</label>
-                <textarea
-                  id="problemDescription"
-                  required
-                  aria-required="true"
-                  className="w-full px-4 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg text-white placeholder-gray-500 h-24 focus:outline-none focus:ring-2 focus:ring-violet-500"
-                  placeholder="Opisz problem..."
-                />
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label htmlFor="fullName" className="block text-sm text-gray-400 mb-2">Imię i nazwisko</label>
-                  <input
-                    id="fullName"
-                    type="text"
-                    required
-                    aria-required="true"
-                    className="w-full px-4 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-violet-500"
-                    placeholder="Jan Kowalski"
-                  />
+          {/* Right Content - Image/Illustration */}
+          <div className={`relative transition-all duration-1000 delay-300 ${mounted ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'}`}>
+            <div className="relative">
+              {/* Main card */}
+              <div className="relative z-10 bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm border border-white/10 rounded-3xl p-8 shadow-2xl">
+                <div className="aspect-square rounded-2xl bg-gradient-to-br from-violet-500/20 to-purple-600/20 flex items-center justify-center">
+                  <Laptop className="w-32 h-32 text-purple-400" />
                 </div>
-                <div>
-                  <label htmlFor="phoneNumber" className="block text-sm text-gray-400 mb-2">Telefon</label>
-                  <input
-                    id="phoneNumber"
-                    type="tel"
-                    required
-                    aria-required="true"
-                    className="w-full px-4 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-violet-500"
-                    placeholder="123-456-789"
-                  />
+                
+                {/* Floating elements */}
+                <div className="absolute -top-4 -right-4 bg-gradient-to-r from-violet-500 to-purple-600 rounded-xl p-4 shadow-lg animate-bounce">
+                  <Wrench className="w-6 h-6 text-white" />
+                </div>
+                
+                <div className="absolute -bottom-4 -left-4 bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl p-4 shadow-lg animate-pulse">
+                  <div className="flex items-center gap-2 text-white font-semibold">
+                    <div className="w-2 h-2 bg-white rounded-full"></div>
+                    <span className="text-sm">Online</span>
+                  </div>
                 </div>
               </div>
-              
-              <button
-                type="submit"
-                className="w-full px-6 py-3 bg-gradient-to-r from-violet-500 to-purple-600 text-white rounded-lg font-semibold hover:shadow-lg hover:shadow-purple-500/25 transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-violet-500"
-                aria-label="Wyślij zgłoszenie usterki"
-              >
-                Wyślij zgłoszenie
-              </button>
-              
-              <p className="text-xs text-gray-400 text-center flex items-center justify-center gap-1">
-                <Clock className="w-4 h-4 text-gray-400" aria-hidden="true" /> Odpowiemy w ciągu 30 minut w godzinach pracy
-              </p>
-            </form>
+
+              {/* Background decoration */}
+              <div className="absolute -inset-4 bg-gradient-to-r from-violet-500/10 to-purple-600/10 rounded-3xl -z-10 blur-xl"></div>
+            </div>
           </div>
         </div>
 
-        {/* Stats Bar */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16">
-          {stats.map((stat) => (
-            <div key={stat.label} className="text-center group">
-              <div className="inline-flex items-center justify-center w-12 h-12 bg-white/5 backdrop-blur-sm rounded-lg border border-white/10 mb-3 transition-transform duration-300 group-hover:scale-110" aria-describedby={`stat-${stat.label}`}>
-                <stat.icon className="w-6 h-6 text-purple-400 transition-transform duration-300 group-hover:rotate-12" role="img" aria-label={stat.label} />
-              </div>
-              <div className="text-2xl font-bold text-white mb-1">{stat.value}</div>
-              <div className="text-sm text-gray-300" id={`stat-${stat.label}`} title={stat.label}>{stat.label}</div>
-            </div>
-          ))}
+        {/* Scroll indicator */}
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce cursor-pointer" onClick={() => scrollToSection('uslugi')}>
+          <div className="flex flex-col items-center gap-2 text-gray-400 hover:text-white transition-colors">
+            <span className="text-sm">Przewiń w dół</span>
+            <ChevronDown className="w-6 h-6" />
+          </div>
         </div>
       </div>
     </section>

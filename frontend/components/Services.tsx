@@ -1,143 +1,162 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
+import { Laptop, Monitor, HardDrive, Settings, Wifi, Users, Check, Clock, DollarSign } from '../lib/icons';
 import Link from 'next/link';
-import { Monitor, Laptop, HardDrive, Shield, Cpu, Cloud, CheckCircle, ArrowRight, Sparkles } from '../lib/icons';
+import { SERVICES } from '../lib/constants';
 
 const ServicesSection = () => {
-  const services = [
-    {
-      title: 'Naprawa komputerów',
-      icon: Monitor,
-      description: 'Diagnostyka i naprawa PC, wymiana podzespołów, modernizacja',
-      features: ['Diagnostyka gratis', 'Gwarancja 6 miesięcy', 'Części oryginalne'],
-      price: 'od 50 zł',
-      popular: true
-    },
-    {
-      title: 'Serwis laptopów',
-      icon: Laptop,
-      description: 'Wymiana matryc, naprawa zawiasów, czyszczenie, wymiana past',
-      features: ['Wszystkie marki', 'Express 24h', 'Laptop zastępczy'],
-      price: 'od 80 zł',
-      popular: false
-    },
-    {
-      title: 'Odzyskiwanie danych',
-      icon: HardDrive,
-      description: 'Profesjonalne odzyskiwanie danych z dysków, kart pamięci, pendrive',
-      features: ['Skuteczność 95%', 'Bez danych bez opłat', 'Poufność danych'],
-      price: 'od 200 zł',
-      popular: false
-    },
-    {
-      title: 'Usuwanie wirusów',
-      icon: Shield,
-      description: 'Czyszczenie systemu, instalacja antywirusa, zabezpieczenie',
-      features: ['Skan głęboki', 'Ochrona real-time', 'Backup danych'],
-      price: 'od 100 zł',
-      popular: false
-    },
-    {
-      title: 'Instalacja systemów i oprogramowania',
-      icon: Cpu,
-      description: 'Windows, Linux, macOS – instalacja, konfiguracja i optymalizacja',
-      features: ['Sterowniki w cenie', 'Aktywacja legalna', 'Optymalizacja systemu'],
-      price: 'od 150 zł',
-      popular: true
-    },
-    {
-      title: 'Pomoc zdalna',
-      icon: Cloud,
-      description: 'Szybka pomoc online przez TeamViewer lub AnyDesk',
-      features: ['Natychmiastowa pomoc', 'Bezpieczne połączenie', 'Płatność po usłudze'],
-      price: 'od 30 zł',
-      popular: false
-    }
-  ];
+  const [hoveredService, setHoveredService] = useState<string | null>(null);
+
+  const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+    Laptop,
+    Monitor,
+    HardDrive,
+    Settings,
+    Wifi,
+    Users
+  };
 
   return (
-    <section id="services" className="py-20 bg-slate-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
-        {/* Sekcja tytułowa */}
-        <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+    <section id="uslugi" className="py-24 bg-slate-950 relative overflow-hidden">
+      {/* Background decoration */}
+      <div className="absolute inset-0 bg-gradient-to-b from-purple-950/10 to-transparent"></div>
+      
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        {/* Section Header */}
+        <div className="text-center mb-16">
+          <div className="inline-block px-4 py-2 bg-purple-500/10 border border-purple-500/20 rounded-full text-purple-300 text-sm mb-4">
             Nasze usługi
+          </div>
+          <h2 className="text-4xl sm:text-5xl font-bold text-white mb-6">
+            Kompleksowy serwis
+            <span className="block bg-gradient-to-r from-violet-400 to-purple-600 bg-clip-text text-transparent">
+              dla Twojego sprzętu
+            </span>
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Kompleksowa obsługa informatyczna dla firm i klientów indywidualnych.
-            Gwarancja jakości i konkurencyjne ceny.
+          <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+            Oferujemy pełen zakres usług serwisowych. Od diagnostyki, przez naprawy, 
+            po kompleksowe doradztwo IT.
           </p>
         </div>
 
-        {/* Siatka usług */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {services.map((service) => (
-            <div
-              key={service.title}
-              className={`relative bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden group ${
-                service.popular ? 'ring-2 ring-purple-500' : ''
-              }`}
-            >
-              {service.popular && (
-                <div className="absolute top-0 right-0 bg-gradient-to-r from-violet-500 to-purple-600 text-white text-xs px-3 py-1 rounded-bl-lg">
-                  POPULARNE
+        {/* Services Grid */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {SERVICES.map((service) => {
+            const IconComponent = iconMap[service.icon];
+            const isHovered = hoveredService === service.id;
+
+            return (
+              <div
+                key={service.id}
+                onMouseEnter={() => setHoveredService(service.id)}
+                onMouseLeave={() => setHoveredService(null)}
+                className={`group relative bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm border border-white/10 rounded-2xl p-6 transition-all duration-300 hover:border-purple-500/50 hover:shadow-xl hover:shadow-purple-500/10 ${
+                  isHovered ? 'transform -translate-y-2' : ''
+                }`}
+              >
+                {/* Icon */}
+                <div className={`w-14 h-14 rounded-xl flex items-center justify-center mb-5 transition-all duration-300 ${
+                  isHovered
+                    ? 'bg-gradient-to-r from-violet-500 to-purple-600 shadow-lg shadow-purple-500/30'
+                    : 'bg-white/5'
+                }`}>
+                  {IconComponent && <IconComponent className={`w-7 h-7 transition-colors duration-300 ${
+                    isHovered ? 'text-white' : 'text-purple-400'
+                  }`} />}
                 </div>
-              )}
 
-              <div className="p-6">
-                <div className="w-12 h-12 bg-gradient-to-br from-violet-500 to-purple-600 rounded-xl flex items-center justify-center mb-4">
-                  <service.icon className="w-6 h-6 text-white" />
+                {/* Content */}
+                <h3 className="text-xl font-bold text-white mb-2 group-hover:text-purple-300 transition-colors">
+                  {service.title}
+                </h3>
+                <p className="text-gray-400 text-sm mb-4 leading-relaxed">
+                  {service.description}
+                </p>
+
+                {/* Price and Duration */}
+                <div className="flex items-center gap-4 mb-4 text-sm">
+                  <div className="flex items-center gap-1 text-green-400">
+                    <DollarSign className="w-4 h-4" />
+                    <span>{service.price}</span>
+                  </div>
+                  <div className="flex items-center gap-1 text-blue-400">
+                    <Clock className="w-4 h-4" />
+                    <span>{service.duration}</span>
+                  </div>
                 </div>
 
-                <h3 className="text-xl font-bold text-gray-900 mb-2">{service.title}</h3>
-                <p className="text-gray-600 mb-4">{service.description}</p>
-
-                <ul className="space-y-2 mb-6">
-                  {service.features.map((feature) => (
-                    <li key={feature} className="flex items-center gap-2 text-sm text-gray-600">
-                      <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
-                      {feature}
+                {/* Features */}
+                <ul className="space-y-2 mb-5">
+                  {service.features.slice(0, 3).map((feature, idx) => (
+                    <li key={idx} className="flex items-start gap-2 text-sm text-gray-300">
+                      <Check className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
+                      <span>{feature}</span>
                     </li>
                   ))}
                 </ul>
 
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-gray-900">{service.price}</span>
-                  <Link
-                    href="/rezerwacja"
-                    className="px-4 py-2 bg-gray-900 text-white rounded-lg font-medium hover:bg-gray-800 transition-colors duration-200 flex items-center gap-2"
-                    aria-label={`Zamów usługę ${service.title}`}
-                  >
-                    Zamów
-                    <ArrowRight className="w-4 h-4" />
-                  </Link>
-                </div>
+                {/* CTA */}
+                <Link href="/rezerwacja">
+                  <button className={`w-full py-3 rounded-lg font-medium text-sm transition-all duration-300 ${
+                    isHovered
+                      ? 'bg-gradient-to-r from-violet-500 to-purple-600 text-white shadow-lg shadow-purple-500/25'
+                      : 'bg-white/5 text-gray-300 border border-white/10'
+                  }`}>
+                    Umów naprawę
+                  </button>
+                </Link>
+
+                {/* Hover glow effect */}
+                {isHovered && (
+                  <div className="absolute inset-0 bg-gradient-to-br from-violet-500/5 to-purple-600/5 rounded-2xl -z-10 blur-xl"></div>
+                )}
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
-        {/* Sekcja AdSense */}
-        <div className="mt-16 flex justify-center">
-          <div className="w-full max-w-4xl bg-gray-100 border border-gray-300 rounded-xl p-6 text-center text-gray-500">
-            {/* Wklej kod AdSense w to miejsce */}
-            <p className="text-sm italic">Miejsce na reklamę (AdSense)</p>
+        {/* Bottom CTA */}
+        <div className="mt-16 text-center">
+          <div className="inline-flex flex-col sm:flex-row items-center gap-4 bg-gradient-to-r from-slate-800/50 to-slate-900/50 backdrop-blur-sm border border-white/10 rounded-2xl p-8">
+            <div className="text-left">
+              <h3 className="text-2xl font-bold text-white mb-2">
+                Nie widzisz swojej usługi?
+              </h3>
+              <p className="text-gray-300">
+                Skontaktuj się z nami – doradzimy najlepsze rozwiązanie
+              </p>
+            </div>
+            <Link href="#kontakt">
+              <button className="px-8 py-4 bg-gradient-to-r from-violet-500 to-purple-600 text-white rounded-xl font-semibold whitespace-nowrap hover:shadow-lg hover:shadow-purple-500/25 transition-all duration-300 transform hover:scale-105">
+                Skontaktuj się
+              </button>
+            </Link>
           </div>
         </div>
 
-        {/* Zapowiedź Marketplace */}
-        <div className="mt-16 bg-gradient-to-r from-violet-600 to-purple-700 rounded-2xl p-8 text-center text-white">
-          <Sparkles className="w-12 h-12 mx-auto mb-4" />
-          <h3 className="text-2xl font-bold mb-2">Marketplace IT – Wkrótce!</h3>
-          <p className="text-white/90 mb-4 max-w-2xl mx-auto">
-            Już niedługo uruchomimy platformę łączącą specjalistów IT z firmami.
-            Dołącz do listy oczekujących i otrzymaj 20% zniżki na start!
-          </p>
-          <button className="px-6 py-3 bg-white text-purple-700 rounded-lg font-semibold hover:shadow-xl transition-all duration-300 transform hover:scale-105">
-            Zapisz się na listę
-          </button>
+        {/* Process Steps */}
+        <div className="mt-24">
+          <h3 className="text-3xl font-bold text-white text-center mb-12">
+            Jak to działa?
+          </h3>
+          <div className="grid md:grid-cols-4 gap-8">
+            {[
+              { step: '01', title: 'Umów wizytę', desc: 'Rezerwacja online lub telefoniczna' },
+              { step: '02', title: 'Diagnostyka', desc: 'Dokładne sprawdzenie usterki' },
+              { step: '03', title: 'Naprawa', desc: 'Szybka i profesjonalna realizacja' },
+              { step: '04', title: 'Odbiór', desc: 'Sprawny sprzęt gotowy do użycia' }
+            ].map((item, idx) => (
+              <div key={idx} className="relative">
+                <div className="text-6xl font-bold text-purple-500/20 mb-4">{item.step}</div>
+                <h4 className="text-xl font-bold text-white mb-2">{item.title}</h4>
+                <p className="text-gray-400">{item.desc}</p>
+                {idx < 3 && (
+                  <div className="hidden md:block absolute top-8 left-full w-full h-0.5 bg-gradient-to-r from-purple-500/50 to-transparent"></div>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>
