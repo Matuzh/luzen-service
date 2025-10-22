@@ -134,7 +134,7 @@ const ReservationPage = () => {
     setSubmitStatus('idle');
 
     try {
-      const response = await fetch('/api/bookings', {
+      const response = await fetch('${process.env.NEXT_PUBLIC_API_URL}/bookings', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

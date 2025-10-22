@@ -41,4 +41,5 @@ jspm_packages/
 !.yarn/releases
 
 # Prisma
+migrations/
 /src/generated/prisma
