@@ -33,7 +33,7 @@ router.post('/', async (req: Request, res: Response) => {
         phone: validatedData.phone,
         service: validatedData.service,
         deviceType: validatedData.deviceType,
-        deviceBrand: validatedData.deviceBrand,
+        deviceBrand: validatedData.deviceBrand || '',
         deviceModel: validatedData.deviceModel || '',
         problemDescription: validatedData.problemDescription,
         preferredDate: new Date(validatedData.preferredDate),
