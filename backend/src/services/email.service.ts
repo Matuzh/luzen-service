@@ -8,7 +8,7 @@ interface Booking {
   phone: string;
   service: string;
   deviceType: string;
-  deviceBrand: string;
+  deviceBrand?: string;
   deviceModel?: string;
   problemDescription: string;
   preferredDate: Date | string;
@@ -183,7 +183,7 @@ class EmailService {
               </div>
               <div class="info-row">
                 <span class="info-label">Urządzenie:</span>
-                <span class="info-value">${booking.deviceType} - ${booking.deviceBrand} ${booking.deviceModel || ''}</span>
+                <span class="info-value">${booking.deviceType} - ${booking.deviceBrand || ''} ${booking.deviceModel || ''}</span>
               </div>
               <div class="info-row">
                 <span class="info-label">Preferowana data:</span>
