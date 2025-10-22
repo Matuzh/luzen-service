@@ -11,7 +11,8 @@ const app: Express = express();
 const PORT = process.env.PORT || 3001;
 const allowedOrigins = [
   'http://localhost:3000',
-  'https://luzen.pl', // Replace with YOUR actual Vercel domain
+  'https://luzen.pl',
+  'https://www.luzen.pl',
   process.env.FRONTEND_URL
 ].filter(Boolean);
 
