@@ -303,7 +303,7 @@ class EmailService {
               </div>
               <div class="info-card">
                 <div class="info-label">Marka</div>
-                <div class="info-value">${booking.deviceBrand}</div>
+                <div class="info-value">${booking.deviceBrand || 'Nie podano'}</div>
               </div>
               <div class="info-card">
                 <div class="info-label">Model</div>
