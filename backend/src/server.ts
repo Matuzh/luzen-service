@@ -32,10 +32,12 @@ app.get('/health', (req: Request, res: Response) => {
 import bookingRoutes from './routes/bookings';
 import contactRoutes from './routes/contact';
 import reviewRoutes from './routes/reviews';
+import serviceRoutes from './routes/services';
 
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/reviews', reviewRoutes);
+app.use('/api/services', serviceRoutes);
 
 // 404 handler
 app.use((req: Request, res: Response) => {
@@ -57,17 +59,14 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 });
 
 // Graceful shutdown
-process.on('SIGINT', async () => {
+const shutdown = async () => {
   console.log('Shutting down gracefully...');
   await prisma.$disconnect();
   process.exit(0);
-});
+};
 
-process.on('SIGTERM', async () => {
-  console.log('Shutting down gracefully...');
-  await prisma.$disconnect();
-  process.exit(0);
-});
+process.on('SIGINT', shutdown);
+process.on('SIGTERM', shutdown);
 
 // Start server
 app.listen(PORT, () => {
