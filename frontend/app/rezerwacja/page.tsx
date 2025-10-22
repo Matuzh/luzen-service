@@ -380,14 +380,9 @@ const ReservationPage = () => {
                     name="deviceBrand"
                     value={formData.deviceBrand}
                     onChange={handleChange}
-                    className={`w-full px-4 py-3 bg-slate-900/50 border ${
-                      errors.deviceBrand ? 'border-red-500/50' : 'border-white/10'
-                    } rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500/50 transition-colors`}
+                    className="w-full px-4 py-3 bg-slate-900/50 border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500/50 transition-colors"
                     placeholder="HP, Dell..."
                   />
-                  {errors.deviceBrand && (
-                    <p className="mt-1 text-sm text-red-400">{errors.deviceBrand}</p>
-                  )}
                 </div>
                 <div>
                   <label htmlFor="deviceModel" className="block text-gray-300 text-sm font-medium mb-2">
