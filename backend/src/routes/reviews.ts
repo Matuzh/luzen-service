@@ -41,7 +41,7 @@ router.post('/', async (req: Request, res: Response) => {
         email: validatedData.email,
         rating: validatedData.rating,
         text: validatedData.text,
-        service: validatedData.service,
+        ...(validatedData.service && { service: validatedData.service }),
         isApproved: false, // Reviews need approval
         isPublished: false
       }
