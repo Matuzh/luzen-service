@@ -121,60 +121,81 @@ const ReservationPage = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  e.preventDefault();
+  
+  if (!validateForm()) {
+    setSubmitStatus('error');
+    setSubmitMessage('Popraw błędy w formularzu');
+    setTimeout(() => setSubmitStatus('idle'), 3000);
+    return;
+  }
+
+  setIsSubmitting(true);
+  setSubmitStatus('idle');
+
+  try {
+    // Get API URL from environment
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
     
-    if (!validateForm()) {
-      setSubmitStatus('error');
-      setSubmitMessage('Popraw błędy w formularzu');
-      setTimeout(() => setSubmitStatus('idle'), 3000);
-      return;
+    console.log('Sending to:', `${apiUrl}/api/bookings`);
+    console.log('Data:', formData);
+
+    const response = await fetch(`${apiUrl}/api/bookings`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        ...formData,
+        preferredDate: new Date(`${formData.preferredDate}T${formData.preferredTime}`).toISOString()
+      }),
+    });
+
+    console.log('Response status:', response.status);
+    
+    // Check if response has content
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      throw new Error('Server returned non-JSON response');
     }
 
-    setIsSubmitting(true);
-    setSubmitStatus('idle');
+    const data = await response.json();
+    console.log('Response data:', data);
 
-    try {
-      const response = await fetch('${process.env.NEXT_PUBLIC_API_URL}/bookings', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ...formData,
-          preferredDate: new Date(`${formData.preferredDate}T${formData.preferredTime}`).toISOString()
-        }),
+    if (response.ok && data.success) {
+      setSubmitStatus('success');
+      setSubmitMessage('Dziękujemy! Twoja rezerwacja została przyjęta. Skontaktujemy się z Tobą w ciągu 24 godzin.');
+      
+      // Reset form
+      setFormData({
+        name: '',
+        email: '',
+        phone: '',
+        service: '',
+        deviceType: '',
+        deviceBrand: '',
+        deviceModel: '',
+        problemDescription: '',
+        preferredDate: '',
+        preferredTime: ''
       });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setSubmitStatus('success');
-        setSubmitMessage('Dziękujemy! Twoja rezerwacja została przyjęta. Skontaktujemy się z Tobą w ciągu 24 godzin.');
-        setFormData({
-          name: '',
-          email: '',
-          phone: '',
-          service: '',
-          deviceType: '',
-          deviceBrand: '',
-          deviceModel: '',
-          problemDescription: '',
-          preferredDate: '',
-          preferredTime: ''
-        });
-        setErrors({});
-      } else {
-        throw new Error(data.error || 'Wystąpił błąd');
-      }
-    } catch (error) {
-      console.error('Booking error:', error);
-      setSubmitStatus('error');
-      setSubmitMessage('Przepraszamy, wystąpił błąd. Spróbuj ponownie lub skontaktuj się telefonicznie.');
-    } finally {
-      setIsSubmitting(false);
-      setTimeout(() => setSubmitStatus('idle'), 8000);
+      setErrors({});
+    } else {
+      throw new Error(data.error || 'Wystąpił błąd');
     }
-  };
+  } catch (error) {
+    console.error('Booking error:', error);
+    setSubmitStatus('error');
+    setSubmitMessage(
+      error instanceof Error 
+        ? error.message 
+        : 'Przepraszamy, wystąpił błąd. Spróbuj ponownie lub skontaktuj się telefonicznie.'
+    );
+  } finally {
+    setIsSubmitting(false);
+    setTimeout(() => setSubmitStatus('idle'), 8000);
+  }
+};
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;

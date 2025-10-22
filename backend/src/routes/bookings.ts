@@ -22,18 +22,27 @@ const bookingSchema = z.object({
 // Create new booking
 router.post('/', async (req: Request, res: Response) => {
   try {
+    console.log('Received booking request:', req.body);
+    
     const validatedData = bookingSchema.parse(req.body);
 
     const booking = await prisma.booking.create({
       data: {
-        ...validatedData,
+        name: validatedData.name,
+        email: validatedData.email,
+        phone: validatedData.phone,
+        service: validatedData.service,
+        deviceType: validatedData.deviceType,
+        deviceBrand: validatedData.deviceBrand,
         deviceModel: validatedData.deviceModel || '',
-        preferredDate: new Date(validatedData.preferredDate)
+        problemDescription: validatedData.problemDescription,
+        preferredDate: new Date(validatedData.preferredDate),
+        preferredTime: validatedData.preferredTime,
+        status: 'PENDING'
       }
     });
 
-    // TODO: Send confirmation email here
-    console.log('New booking created:', booking.id);
+    console.log('Booking created:', booking.id);
 
     res.status(201).json({
       success: true,
@@ -41,6 +50,8 @@ router.post('/', async (req: Request, res: Response) => {
       message: 'Booking created successfully'
     });
   } catch (error) {
+    console.error('Booking error:', error);
+    
     if (error instanceof z.ZodError) {
       return res.status(400).json({
         success: false,
@@ -49,10 +60,10 @@ router.post('/', async (req: Request, res: Response) => {
       });
     }
     
-    console.error('Booking creation error:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to create booking'
+      error: 'Failed to create booking',
+      message: error instanceof Error ? error.message : 'Unknown error'
     });
   }
 });
@@ -91,6 +102,11 @@ router.get('/:id', async (req: Request, res: Response) => {
       error: 'Failed to fetch booking'
     });
   }
+});
+
+// Add a test GET route
+router.get('/test', (req: Request, res: Response) => {
+  res.json({ success: true, message: 'Bookings route is working!' });
 });
 
 export default router;
