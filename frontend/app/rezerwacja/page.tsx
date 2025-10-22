@@ -71,32 +71,40 @@ const ReservationPage = () => {
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
 
+    // Name validation
     if (!formData.name.trim() || formData.name.length < 2) {
       newErrors.name = 'Imię musi mieć co najmniej 2 znaki';
     }
 
+    // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
       newErrors.email = 'Podaj poprawny adres email';
     }
 
+    // Phone validation
+    const phoneClean = formData.phone.replace(/[\s\-()]/g, '');
     const phoneRegex = /^[0-9]{9,15}$/;
-    if (!phoneRegex.test(formData.phone.replace(/[\s-]/g, ''))) {
+    if (!phoneRegex.test(phoneClean)) {
       newErrors.phone = 'Podaj poprawny numer telefonu (9-15 cyfr)';
     }
 
+    // Service validation
     if (!formData.service) {
       newErrors.service = 'Wybierz rodzaj usługi';
     }
 
+    // Device type validation
     if (!formData.deviceType) {
       newErrors.deviceType = 'Wybierz typ urządzenia';
     }
 
+    // Problem description validation
     if (!formData.problemDescription.trim() || formData.problemDescription.length < 10) {
       newErrors.problemDescription = 'Opis problemu musi mieć co najmniej 10 znaków';
     }
 
+    // Date validation
     if (!formData.preferredDate) {
       newErrors.preferredDate = 'Wybierz datę';
     } else {
@@ -108,8 +116,15 @@ const ReservationPage = () => {
       }
     }
 
+    // Time validation
     if (!formData.preferredTime) {
       newErrors.preferredTime = 'Wybierz godzinę';
+    } else {
+      const timeParts = formData.preferredTime.split(':');
+      const hours = timeParts[0] ? parseInt(timeParts[0], 10) : undefined;
+      if (hours === undefined || isNaN(hours) || hours < 9 || hours >= 19) {
+        newErrors.preferredTime = 'Godzina musi być między 09:00 a 19:00';
+      }
     }
 
     setErrors(newErrors);
@@ -117,85 +132,89 @@ const ReservationPage = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  
-  if (!validateForm()) {
-    setSubmitStatus('error');
-    setSubmitMessage('Popraw błędy w formularzu');
-    setTimeout(() => setSubmitStatus('idle'), 3000);
-    return;
-  }
-
-  setIsSubmitting(true);
-  setSubmitStatus('idle');
-
-  try {
-    // Get API URL from environment
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+    e.preventDefault();
     
-    console.log('Sending to:', `${apiUrl}/api/bookings`);
-    console.log('Data:', formData);
-
-    const response = await fetch(`${apiUrl}/api/bookings`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        ...formData,
-        preferredDate: new Date(`${formData.preferredDate}T${formData.preferredTime}`).toISOString()
-      }),
-    });
-
-    console.log('Response status:', response.status);
-    
-    // Check if response has content
-    const contentType = response.headers.get('content-type');
-    if (!contentType || !contentType.includes('application/json')) {
-      throw new Error('Server returned non-JSON response');
+    if (!validateForm()) {
+      setSubmitStatus('error');
+      setSubmitMessage('Popraw błędy w formularzu');
+      setTimeout(() => setSubmitStatus('idle'), 3000);
+      return;
     }
 
-    const data = await response.json();
-    console.log('Response data:', data);
+    setIsSubmitting(true);
+    setSubmitStatus('idle');
 
-    if (response.ok && data.success) {
-      setSubmitStatus('success');
-      setSubmitMessage('Dziękujemy! Twoja rezerwacja została przyjęta. Skontaktujemy się z Tobą w ciągu 24 godzin.');
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
       
-      // Reset form
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        service: '',
-        deviceType: '',
-        deviceBrand: '',
-        deviceModel: '',
-        problemDescription: '',
-        preferredDate: '',
-        preferredTime: ''
+      console.log('Sending booking to:', `${apiUrl}/api/bookings`);
+
+      // Prepare data - remove empty strings for optional fields
+      const submitData = {
+        ...formData,
+        deviceBrand: formData.deviceBrand.trim() || undefined,
+        deviceModel: formData.deviceModel.trim() || undefined,
+        preferredDate: formData.preferredDate, // Send as ISO date string
+      };
+
+      const response = await fetch(`${apiUrl}/api/bookings`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(submitData),
       });
-      setErrors({});
-    } else {
-      throw new Error(data.error || 'Wystąpił błąd');
+
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new Error('Serwer zwrócił nieprawidłową odpowiedź');
+      }
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setSubmitStatus('success');
+        setSubmitMessage('Dziękujemy! Twoja rezerwacja została przyjęta. Skontaktujemy się z Tobą w ciągu 24 godzin.');
+        
+        // Reset form
+        setFormData({
+          name: '',
+          email: '',
+          phone: '',
+          service: '',
+          deviceType: '',
+          deviceBrand: '',
+          deviceModel: '',
+          problemDescription: '',
+          preferredDate: '',
+          preferredTime: ''
+        });
+        setErrors({});
+
+        // Scroll to top to show success message
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        throw new Error(data.message || data.error || 'Wystąpił błąd podczas tworzenia rezerwacji');
+      }
+    } catch (error) {
+      console.error('Booking error:', error);
+      setSubmitStatus('error');
+      setSubmitMessage(
+        error instanceof Error 
+          ? error.message 
+          : 'Przepraszamy, wystąpił błąd. Spróbuj ponownie lub skontaktuj się telefonicznie.'
+      );
+    } finally {
+      setIsSubmitting(false);
+      setTimeout(() => setSubmitStatus('idle'), 8000);
     }
-  } catch (error) {
-    console.error('Booking error:', error);
-    setSubmitStatus('error');
-    setSubmitMessage(
-      error instanceof Error 
-        ? error.message 
-        : 'Przepraszamy, wystąpił błąd. Spróbuj ponownie lub skontaktuj się telefonicznie.'
-    );
-  } finally {
-    setIsSubmitting(false);
-    setTimeout(() => setSubmitStatus('idle'), 8000);
-  }
-};
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+    
+    // Clear error for this field when user starts typing
     if (errors[name]) {
       setErrors(prev => {
         const newErrors = { ...prev };
@@ -205,100 +224,77 @@ const ReservationPage = () => {
     }
   };
 
+  // Get today's date for min attribute
   const today = new Date().toISOString().split('T')[0];
 
   return (
-    <section className="relative min-h-screen py-24 bg-gradient-to-br from-slate-950 via-purple-950/10 to-slate-950 overflow-hidden">
-      {/* Animated background */}
-      <div className="absolute inset-0">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-violet-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
-      </div>
-
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
+    <section className="relative min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 py-20">
+      {/* Background effects */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-violet-900/20 via-transparent to-transparent" />
+      <div className="absolute inset-0 bg-grid-white/[0.02]" />
+      
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="inline-block px-4 py-2 bg-purple-500/10 border border-purple-500/20 rounded-full text-purple-300 text-sm mb-4">
-            Rezerwacja online
-          </div>
-          <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4">
-            Umów wizytę
-            <span className="block bg-gradient-to-r from-violet-400 to-purple-600 bg-clip-text text-transparent">
-              w serwisie
-            </span>
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+            Zarezerwuj <span className="bg-gradient-to-r from-violet-400 to-purple-400 bg-clip-text text-transparent">wizytę</span>
           </h1>
-          <p className="text-lg text-gray-300 max-w-2xl mx-auto">
-            Wypełnij formularz, a my skontaktujemy się z Tobą w ciągu 24 godzin, aby potwierdzić termin.
+          <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+            Wypełnij formularz, a my skontaktujemy się z Tobą w ciągu 24 godzin, aby potwierdzić termin wizyty.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-12">
-          {/* Booking Form */}
-          <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl border border-white/10 p-8">
-            <h2 className="text-2xl font-bold text-white mb-6">Formularz rezerwacji</h2>
-
-            {submitStatus !== 'idle' && (
-              <div className={`mb-6 p-4 rounded-lg flex items-start gap-3 ${
-                submitStatus === 'success'
-                  ? 'bg-green-500/10 border border-green-500/30'
-                  : 'bg-red-500/10 border border-red-500/30'
-              }`}>
-                {submitStatus === 'success' ? (
-                  <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
-                ) : (
-                  <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
-                )}
-                <p className={`text-sm ${
-                  submitStatus === 'success' ? 'text-green-300' : 'text-red-300'
-                }`}>
-                  {submitMessage}
-                </p>
-              </div>
-            )}
-
-            <form onSubmit={handleSubmit} className="space-y-5">
-              {/* Name */}
+        {/* Status Messages */}
+        {submitStatus === 'success' && (
+          <div className="mb-8 max-w-4xl mx-auto">
+            <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-4 flex items-start gap-3">
+              <CheckCircle className="w-6 h-6 text-green-400 flex-shrink-0 mt-0.5" />
               <div>
-                <label htmlFor="name" className="block text-gray-300 text-sm font-medium mb-2">
-                  Imię i nazwisko *
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  className={`w-full px-4 py-3 bg-slate-900/50 border ${
-                    errors.name ? 'border-red-500/50' : 'border-white/10'
-                  } rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500/50 transition-colors`}
-                  placeholder="Jan Kowalski"
-                />
-                {errors.name && (
-                  <p className="mt-1 text-sm text-red-400">{errors.name}</p>
-                )}
+                <p className="text-green-400 font-semibold">Sukces!</p>
+                <p className="text-green-300 text-sm mt-1">{submitMessage}</p>
               </div>
+            </div>
+          </div>
+        )}
 
-              {/* Email & Phone */}
+        {submitStatus === 'error' && (
+          <div className="mb-8 max-w-4xl mx-auto">
+            <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4 flex items-start gap-3">
+              <AlertCircle className="w-6 h-6 text-red-400 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="text-red-400 font-semibold">Błąd</p>
+                <p className="text-red-300 text-sm mt-1">{submitMessage}</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* Booking Form */}
+          <div className="lg:col-span-2">
+            <form onSubmit={handleSubmit} className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm border border-white/10 rounded-2xl p-8 space-y-6">
+              {/* Personal Information */}
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="email" className="block text-gray-300 text-sm font-medium mb-2">
-                    Email *
+                  <label htmlFor="name" className="block text-gray-300 text-sm font-medium mb-2">
+                    Imię i nazwisko *
                   </label>
                   <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={formData.email}
+                    type="text"
+                    id="name"
+                    name="name"
+                    value={formData.name}
                     onChange={handleChange}
                     className={`w-full px-4 py-3 bg-slate-900/50 border ${
-                      errors.email ? 'border-red-500/50' : 'border-white/10'
+                      errors.name ? 'border-red-500/50' : 'border-white/10'
                     } rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500/50 transition-colors`}
-                    placeholder="jan@example.com"
+                    placeholder="Jan Kowalski"
                   />
-                  {errors.email && (
-                    <p className="mt-1 text-sm text-red-400">{errors.email}</p>
+                  {errors.name && (
+                    <p className="mt-1 text-sm text-red-400">{errors.name}</p>
                   )}
                 </div>
+
                 <div>
                   <label htmlFor="phone" className="block text-gray-300 text-sm font-medium mb-2">
                     Telefon *
@@ -312,7 +308,7 @@ const ReservationPage = () => {
                     className={`w-full px-4 py-3 bg-slate-900/50 border ${
                       errors.phone ? 'border-red-500/50' : 'border-white/10'
                     } rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500/50 transition-colors`}
-                    placeholder="123456789"
+                    placeholder="123-456-789"
                   />
                   {errors.phone && (
                     <p className="mt-1 text-sm text-red-400">{errors.phone}</p>
@@ -320,7 +316,27 @@ const ReservationPage = () => {
                 </div>
               </div>
 
-              {/* Service */}
+              <div>
+                <label htmlFor="email" className="block text-gray-300 text-sm font-medium mb-2">
+                  Email *
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className={`w-full px-4 py-3 bg-slate-900/50 border ${
+                    errors.email ? 'border-red-500/50' : 'border-white/10'
+                  } rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500/50 transition-colors`}
+                  placeholder="jan.kowalski@example.com"
+                />
+                {errors.email && (
+                  <p className="mt-1 text-sm text-red-400">{errors.email}</p>
+                )}
+              </div>
+
+              {/* Service Selection */}
               <div>
                 <label htmlFor="service" className="block text-gray-300 text-sm font-medium mb-2">
                   Rodzaj usługi *
@@ -346,33 +362,36 @@ const ReservationPage = () => {
                 )}
               </div>
 
-              {/* Device Info */}
-              <div className="grid sm:grid-cols-3 gap-4">
-                <div>
-                  <label htmlFor="deviceType" className="block text-gray-300 text-sm font-medium mb-2">
-                    Typ urządzenia *
-                  </label>
-                  <select
-                    id="deviceType"
-                    name="deviceType"
-                    value={formData.deviceType}
-                    onChange={handleChange}
-                    className={`w-full px-4 py-3 bg-slate-900/50 border ${
-                      errors.deviceType ? 'border-red-500/50' : 'border-white/10'
-                    } rounded-lg text-white focus:outline-none focus:border-purple-500/50 transition-colors`}
-                  >
-                    <option value="">Wybierz...</option>
-                    {deviceTypes.map((type) => (
-                      <option key={type} value={type}>{type}</option>
-                    ))}
-                  </select>
-                  {errors.deviceType && (
-                    <p className="mt-1 text-sm text-red-400">{errors.deviceType}</p>
-                  )}
-                </div>
+              {/* Device Information */}
+              <div>
+                <label htmlFor="deviceType" className="block text-gray-300 text-sm font-medium mb-2">
+                  Typ urządzenia *
+                </label>
+                <select
+                  id="deviceType"
+                  name="deviceType"
+                  value={formData.deviceType}
+                  onChange={handleChange}
+                  className={`w-full px-4 py-3 bg-slate-900/50 border ${
+                    errors.deviceType ? 'border-red-500/50' : 'border-white/10'
+                  } rounded-lg text-white focus:outline-none focus:border-purple-500/50 transition-colors`}
+                >
+                  <option value="">Wybierz typ urządzenia...</option>
+                  {deviceTypes.map((type) => (
+                    <option key={type} value={type}>
+                      {type}
+                    </option>
+                  ))}
+                </select>
+                {errors.deviceType && (
+                  <p className="mt-1 text-sm text-red-400">{errors.deviceType}</p>
+                )}
+              </div>
+
+              <div className="grid sm:grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="deviceBrand" className="block text-gray-300 text-sm font-medium mb-2">
-                    Marka
+                    Marka urządzenia <span className="text-gray-500">(opcjonalne)</span>
                   </label>
                   <input
                     type="text"
@@ -380,13 +399,14 @@ const ReservationPage = () => {
                     name="deviceBrand"
                     value={formData.deviceBrand}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 bg-slate-900/50 border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500/50 transition-colors"
-                    placeholder="HP, Dell..."
+                    className="w-full px-4 py-3 bg-slate-900/50 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500/50 transition-colors"
+                    placeholder="np. HP, Dell, Lenovo..."
                   />
                 </div>
+
                 <div>
                   <label htmlFor="deviceModel" className="block text-gray-300 text-sm font-medium mb-2">
-                    Model
+                    Model urządzenia <span className="text-gray-500">(opcjonalne)</span>
                   </label>
                   <input
                     type="text"
@@ -395,7 +415,7 @@ const ReservationPage = () => {
                     value={formData.deviceModel}
                     onChange={handleChange}
                     className="w-full px-4 py-3 bg-slate-900/50 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500/50 transition-colors"
-                    placeholder="Pavilion..."
+                    placeholder="np. Pavilion 15..."
                   />
                 </div>
               </div>
