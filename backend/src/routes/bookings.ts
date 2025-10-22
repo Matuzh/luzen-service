@@ -1,11 +1,11 @@
 import express, { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
 import { z } from 'zod';
+import emailService from '../services/email.service';
 
 const router = express.Router();
 const prisma = new PrismaClient();
 
-// Validation schema
 const bookingSchema = z.object({
   name: z.string().min(2).max(100),
   email: z.string().email(),
@@ -15,14 +15,14 @@ const bookingSchema = z.object({
   deviceBrand: z.string().min(1),
   deviceModel: z.string().optional(),
   problemDescription: z.string().min(10).max(1000),
-  preferredDate: z.string().datetime(),
+  preferredDate: z.string(),
   preferredTime: z.string().min(1)
 });
 
 // Create new booking
 router.post('/', async (req: Request, res: Response) => {
   try {
-    console.log('Received booking request:', req.body);
+    console.log('📝 Received booking request:', req.body);
     
     const validatedData = bookingSchema.parse(req.body);
 
@@ -42,15 +42,33 @@ router.post('/', async (req: Request, res: Response) => {
       }
     });
 
-    console.log('Booking created:', booking.id);
+    console.log('✅ Booking created:', booking.id);
+
+    // Send emails asynchronously (don't wait for them)
+    Promise.all([
+      emailService.sendBookingConfirmation(booking),
+      emailService.sendBookingNotificationToAdmin(booking)
+    ]).then(() => {
+      console.log('✅ All booking emails sent successfully');
+    }).catch((error) => {
+      console.error('⚠️ Some emails failed to send:', error);
+      // Don't fail the request if emails fail
+    });
 
     res.status(201).json({
       success: true,
-      data: booking,
+      data: {
+        id: booking.id,
+        name: booking.name,
+        email: booking.email,
+        service: booking.service,
+        preferredDate: booking.preferredDate,
+        status: booking.status
+      },
       message: 'Booking created successfully'
     });
   } catch (error) {
-    console.error('Booking error:', error);
+    console.error('❌ Booking error:', error);
     
     if (error instanceof z.ZodError) {
       return res.status(400).json({
@@ -72,13 +90,6 @@ router.post('/', async (req: Request, res: Response) => {
 router.get('/:id', async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-
-    if (!id) {
-      return res.status(400).json({
-        success: false,
-        error: 'ID rezerwacji jest wymagane'
-      });
-    }
 
     const booking = await prisma.booking.findUnique({
       where: { id }
@@ -104,7 +115,7 @@ router.get('/:id', async (req: Request, res: Response) => {
   }
 });
 
-// Add a test GET route
+// Test route
 router.get('/test', (req: Request, res: Response) => {
   res.json({ success: true, message: 'Bookings route is working!' });
 });

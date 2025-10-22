@@ -93,10 +93,6 @@ const ReservationPage = () => {
       newErrors.deviceType = 'Wybierz typ urządzenia';
     }
 
-    if (!formData.deviceBrand.trim()) {
-      newErrors.deviceBrand = 'Podaj markę urządzenia';
-    }
-
     if (!formData.problemDescription.trim() || formData.problemDescription.length < 10) {
       newErrors.problemDescription = 'Opis problemu musi mieć co najmniej 10 znaków';
     }
@@ -376,7 +372,7 @@ const ReservationPage = () => {
                 </div>
                 <div>
                   <label htmlFor="deviceBrand" className="block text-gray-300 text-sm font-medium mb-2">
-                    Marka *
+                    Marka
                   </label>
                   <input
                     type="text"
@@ -558,25 +554,16 @@ const ReservationPage = () => {
                     Godziny pracy
                   </h3>
                   <div className="space-y-1 text-sm text-gray-300">
-                    <div className="flex justify-between">
-                      <span>Poniedziałek - Piątek:</span>
-                      <span className="font-semibold">09:00 - 19:00</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Sobota:</span>
-                      <span className="font-semibold">10:00 - 16:00</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Niedziela:</span>
-                      <span className="text-red-400 font-semibold">Zamknięte</span>
-                    </div>
+                    <p className="text-gray-300">
+                      Nie prowadzimy stałych godzin pracy – obsługujemy wyłącznie wizyty po wcześniejszej rezerwacji.
+                    </p>
                   </div>
                 </div>
               </div>
               <div className="pt-3 border-t border-white/10">
                 <p className="text-xs text-gray-400">
                   <AlertCircle className="w-4 h-4 inline mr-1" />
-                  Obsługujemy wyłącznie na rezerwacje
+                  Zarezerwuj wizytę, aby uzyskać indywidualną obsługę
                 </p>
               </div>
             </div>
@@ -590,15 +577,15 @@ const ReservationPage = () => {
               <ul className="space-y-2 text-sm text-gray-300">
                 <li className="flex items-start gap-2">
                   <span className="text-blue-400 mt-1">•</span>
-                  <span>Potwierdzenie rezerwacji otrzymasz emailem lub telefonicznie</span>
+                  <span>Potwierdzenie rezerwacji otrzymasz emailem lub telefonicznie.</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-blue-400 mt-1">•</span>
-                  <span>Diagnostyka jest płatna i kosztuje 50 zł (odliczane od naprawy)</span>
+                  <span>Diagnostyka jest płatna i kosztuje 80 zł (odliczane od naprawy).</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-blue-400 mt-1">•</span>
-                  <span>Przed wizytą zrób kopię zapasową ważnych danych</span>
+                  <span>Przed wizytą zrób kopię zapasową ważnych danych.</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-blue-400 mt-1">•</span>
