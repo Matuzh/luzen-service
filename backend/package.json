@@ -1,20 +1,21 @@
 {
     "name": "luzen-backend",
     "version": "1.0.0",
-    "description": "",
+    "description": "LuzeN Computer Service Backend API",
     "main": "dist/server.js",
     "directories": {
         "test": "tests"
     },
-    "keywords": [],
-    "author": "",
+    "keywords": ["express", "typescript", "api", "prisma"],
+    "author": "Mateusz Szuper - LuzeN",
     "license": "ISC",
     "scripts": {
         "dev": "nodemon src/server.ts",
         "start": "node dist/server.js",
-        "build": "tsc",
+        "build": "prisma generate && tsc",
         "prisma:migrate": "prisma migrate dev",
         "prisma:generate": "prisma generate",
+        "postinstall": "prisma generate",
         "prisma:studio": "prisma studio",
         "prisma:push": "prisma db push",
         "seed": "ts-node prisma/seed.ts",
