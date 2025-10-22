@@ -6,24 +6,32 @@
     "directories": {
         "test": "tests"
     },
-    "keywords": ["express", "typescript", "api", "prisma"],
+    "keywords": [
+        "express",
+        "typescript",
+        "api",
+        "prisma"
+    ],
     "author": "Mateusz Szuper - LuzeN",
     "license": "ISC",
     "scripts": {
-        "dev": "nodemon src/server.ts",
+        "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
         "start": "node dist/server.js",
-        "build": "prisma generate && tsc",
+        "build": "tsc",
         "prisma:migrate": "prisma migrate dev",
         "prisma:generate": "prisma generate",
         "postinstall": "prisma generate",
         "prisma:studio": "prisma studio",
         "prisma:push": "prisma db push",
         "seed": "ts-node prisma/seed.ts",
-        "test": "jest"
+        "test": "jest",
+        "lint": "eslint . --ext .ts",
+        "format": "prettier --write \"src/**/*.ts\""
     },
     "dependencies": {
         "@prisma/client": "^6.17.1",
         "bcryptjs": "^3.0.2",
+        "compression": "^1.8.1",
         "cors": "^2.8.5",
         "dotenv": "^17.2.3",
         "express": "^4.21.2",
@@ -43,6 +51,7 @@
     },
     "devDependencies": {
         "@types/bcryptjs": "^2.4.6",
+        "@types/compression": "^1.8.1",
         "@types/cors": "^2.8.19",
         "@types/express": "^5.0.3",
         "@types/jest": "^30.0.0",

@@ -14,8 +14,8 @@ model Booking {
   phone               String
   service             String
   deviceType          String
-  deviceBrand         String?
-  deviceModel         String?
+  deviceBrand         String?       // Now properly optional
+  deviceModel         String?       // Now properly optional
   problemDescription  String        @db.Text
   preferredDate       DateTime
   preferredTime       String

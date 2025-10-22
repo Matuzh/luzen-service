@@ -8,13 +8,13 @@ interface Booking {
   phone: string;
   service: string;
   deviceType: string;
-  deviceBrand?: string;
-  deviceModel?: string;
+  deviceBrand?: string | null;
+  deviceModel?: string | null;
   problemDescription: string;
   preferredDate: Date | string;
   preferredTime: string;
   status: string;
-  createdAt: Date | string;
+  createdAt?: Date | string;
 }
 
 interface ContactMessage {
@@ -24,7 +24,7 @@ interface ContactMessage {
   phone: string;
   subject: string;
   message: string;
-  createdAt: Date | string;
+  createdAt?: Date | string;
 }
 
 interface EmailConfig {
@@ -44,7 +44,7 @@ class EmailService {
     const config: EmailConfig = {
       host: process.env.SMTP_HOST || 'smtp.gmail.com',
       port: parseInt(process.env.SMTP_PORT || '587'),
-      secure: false,
+      secure: false, // true for 465, false for other ports
       auth: {
         user: process.env.SMTP_USER || '',
         pass: process.env.SMTP_PASS || '',
@@ -52,6 +52,11 @@ class EmailService {
     };
 
     this.transporter = nodemailer.createTransport(config);
+    
+    // Verify connection on startup
+    this.testConnection().catch(error => {
+      console.error('❌ Email service failed to initialize:', error);
+    });
   }
 
   async sendBookingConfirmation(booking: Booking): Promise<void> {
@@ -183,42 +188,39 @@ class EmailService {
               </div>
               <div class="info-row">
                 <span class="info-label">Urządzenie:</span>
-                <span class="info-value">${booking.deviceType} - ${booking.deviceBrand || ''} ${booking.deviceModel || ''}</span>
+                <span class="info-value">${booking.deviceType}${booking.deviceBrand ? ` - ${booking.deviceBrand}` : ''}${booking.deviceModel ? ` ${booking.deviceModel}` : ''}</span>
               </div>
               <div class="info-row">
-                <span class="info-label">Preferowana data:</span>
-                <span class="info-value">${date} o ${booking.preferredTime}</span>
+                <span class="info-label">Data:</span>
+                <span class="info-value">${date}</span>
               </div>
-            </div>
-
-            <div class="info-box">
-              <h3 style="margin-top: 0; color: #8B5CF6; font-size: 18px;">📝 Opis problemu</h3>
-              <p style="margin: 0;">${booking.problemDescription}</p>
+              <div class="info-row">
+                <span class="info-label">Godzina:</span>
+                <span class="info-value">${booking.preferredTime}</span>
+              </div>
             </div>
 
             <div class="warning">
-              <strong>⏰ Co dalej?</strong><br>
-              Skontaktujemy się z Tobą w ciągu <strong>24 godzin</strong>, aby potwierdzić termin i dostarczyć szczegóły dotyczące wizyty.
+              <strong>⚠️ Ważne informacje:</strong><br>
+              • Skontaktujemy się w ciągu 24 godzin, aby potwierdzić termin<br>
+              • Diagnostyka kosztuje 80 zł (odliczane od naprawy)<br>
+              • Pamiętaj o zrobieniu kopii zapasowej ważnych danych
             </div>
 
-            <div style="text-align: center; margin: 30px 0;">
+            <p style="margin-top: 30px;">
+              W razie pytań lub konieczności zmiany terminu, skontaktuj się z nami:
+            </p>
+            
+            <div style="text-align: center; margin: 20px 0;">
               <a href="tel:+48789710406" class="button">📞 Zadzwoń: 789-710-406</a>
             </div>
-
-            <p style="font-size: 15px;"><strong>Ważne przed wizytą:</strong></p>
-            <ul style="padding-left: 20px;">
-              <li>📦 Przygotuj urządzenie do naprawy</li>
-              <li>💾 Wykonaj kopię zapasową ważnych danych</li>
-              <li>🔑 Przygotuj hasła dostępowe (jeśli potrzebne)</li>
-              <li>📄 Zabierz dowód zakupu (jeśli gwarancja)</li>
-            </ul>
           </div>
           <div class="footer">
             <p style="margin: 0 0 10px 0;"><strong>LuzeN - Serwis Komputerowy</strong></p>
-            <p style="margin: 5px 0;">ul. Topolowa 74, 43-227 Góra</p>
+            <p style="margin: 5px 0;">ul. Armii Polskiej 49/8, 56-200 Góra</p>
             <p style="margin: 5px 0;">📧 kontakt@luzen.pl | 📞 +48 789 710 406</p>
-            <p style="font-size: 12px; color: #9CA3AF; margin-top: 20px;">
-              Ta wiadomość została wygenerowana automatycznie.
+            <p style="margin: 15px 0 5px 0; font-size: 12px; color: #9CA3AF;">
+              To jest automatyczna wiadomość. Prosimy nie odpowiadać na ten email.
             </p>
           </div>
         </div>
@@ -241,21 +243,22 @@ class EmailService {
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <style>
-          body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; background: #f3f4f6; margin: 0; padding: 20px; }
+          body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #1F2937; margin: 0; padding: 20px; background: #f3f4f6; }
           .container { max-width: 700px; margin: 0 auto; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-          .header { background: linear-gradient(135deg, #DC2626 0%, #991B1B 100%); color: white; padding: 30px; text-align: center; }
+          .header { background: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%); color: white; padding: 30px; text-align: center; }
           .content { padding: 30px; }
-          .alert { background: #FEE2E2; border-left: 4px solid #DC2626; padding: 16px; margin: 20px 0; border-radius: 6px; }
-          .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
-          .info-card { background: #F9FAFB; padding: 15px; border-radius: 8px; border: 1px solid #E5E7EB; }
-          .info-label { font-size: 11px; color: #6B7280; text-transform: uppercase; margin-bottom: 5px; font-weight: 600; }
-          .info-value { font-size: 16px; font-weight: 600; color: #1F2937; }
-          .problem-box { background: #FEF3C7; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #F59E0B; }
-          .button { display: inline-block; padding: 12px 24px; text-align: center; text-decoration: none; border-radius: 8px; font-weight: 600; margin: 5px; }
+          .alert { background: #FEE2E2; border-left: 4px solid #DC2626; padding: 16px; margin-bottom: 24px; border-radius: 6px; color: #991B1B; }
+          .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0; }
+          .info-card { background: #F9FAFB; padding: 15px; border-radius: 8px; border-left: 3px solid #8B5CF6; }
+          .info-label { font-size: 12px; color: #6B7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; }
+          .info-value { font-size: 16px; color: #1F2937; font-weight: 600; word-break: break-all; }
+          .problem-box { background: #FEF3C7; border-left: 4px solid #F59E0B; padding: 20px; margin: 20px 0; border-radius: 6px; }
+          .button { display: inline-block; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: 600; margin: 5px; }
           .button-primary { background: #8B5CF6; color: white; }
           .button-secondary { background: #10B981; color: white; }
           @media only screen and (max-width: 600px) {
             .info-grid { grid-template-columns: 1fr; }
+            .content { padding: 20px; }
           }
         </style>
       </head>
@@ -323,7 +326,7 @@ class EmailService {
 
             <div style="background: #F3F4F6; padding: 15px; border-radius: 8px; margin-top: 20px; font-size: 14px;">
               <p style="margin: 5px 0;"><strong>Status:</strong> ${booking.status}</p>
-              <p style="margin: 5px 0;"><strong>Data utworzenia:</strong> ${new Date(booking.createdAt).toLocaleString('pl-PL')}</p>
+              <p style="margin: 5px 0;"><strong>Data utworzenia:</strong> ${booking.createdAt ? new Date(booking.createdAt).toLocaleString('pl-PL') : 'N/A'}</p>
               <p style="margin: 5px 0;"><strong>ID rezerwacji:</strong> ${booking.id}</p>
             </div>
           </div>
@@ -422,7 +425,7 @@ class EmailService {
 
             <div style="background: #F3F4F6; padding: 15px; border-radius: 8px; margin-top: 20px; font-size: 14px; color: #6B7280;">
               <strong>ID wiadomości:</strong> ${message.id}<br>
-              <strong>Data otrzymania:</strong> ${new Date(message.createdAt).toLocaleString('pl-PL')}
+              <strong>Data otrzymania:</strong> ${message.createdAt ? new Date(message.createdAt).toLocaleString('pl-PL') : 'N/A'}
             </div>
           </div>
         </div>
