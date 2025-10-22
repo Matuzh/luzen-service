@@ -12,7 +12,7 @@ const bookingSchema = z.object({
   phone: z.string().min(9).max(15),
   service: z.string().min(1),
   deviceType: z.string().min(1),
-  deviceBrand: z.string().min(1),
+  deviceBrand: z.string().optional(),
   deviceModel: z.string().optional(),
   problemDescription: z.string().min(10).max(1000),
   preferredDate: z.string(),
