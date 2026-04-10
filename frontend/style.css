@@ -1,0 +1,49 @@
+body {
+    box-sizing: border-box;
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.header {
+    text-align: center;
+    background-color: #f0f0f0;
+    display: flex;
+    gap: 10em;
+    padding: 2em 2em;
+    justify-content: center;
+}
+
+#uslugi {
+    display: flex;
+    gap: 2em;
+}
+
+.main-content {
+    background-color: #d3d3d3;
+    padding: 3em 7em;
+}
+
+#main-naglowek {
+    text-align: center;
+    width: 100%;
+    display: flex;
+    padding: 0em 3em;
+    justify-content: left;
+    float: left;
+    font-size: 0.6em;
+}
+
+#main-left {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    width: 50%;
+    
+}
+
+#main-right {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    width: 50%;
+}
